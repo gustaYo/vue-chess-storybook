@@ -1,0 +1,40 @@
+.blue .cg-board-wrap{
+  background-image: url(images/board/blue.svg);
+}
+
+.wood .cg-board-wrap {
+  position: relative;
+  background-image: url('images/board/wood2.jpg');
+  background-size: cover;
+}
+
+.marble .cg-board-wrap {
+  position: relative;
+  background-image: url('images/board/marble.jpg');
+  background-size: cover;
+}
+
+.light-wood-3d .cg-board-wrap {
+  position: relative;
+  background-image: url('images/board/3d/Light-Wood.png');
+  background-size: cover;
+}
+
+.in3d .cg-board-wrap {
+  background-size: cover;
+  background-image: url('images/board/3d/woodi.1024.png');
+}
+
+.blue2 .cg-board-wrap {
+  position: relative;
+  background-image: url('images/board/blue2.jpg');
+  background-size: cover;
+}
+
+.light-wood-3d .cg-board {
+  position: absolute;
+  left: 0;
+  top: 0.6168702%;
+  width: 100%;
+  height: 97.0229%;
+}

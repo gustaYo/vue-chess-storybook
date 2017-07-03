@@ -1,0 +1,151 @@
+
+.merida .cg-board piece.pawn.white {
+  background-image: url('images/pieces/merida/wP.svg');
+}
+.merida .cg-board piece.bishop.white {
+  background-image: url('images/pieces/merida/wB.svg');
+}
+.merida .cg-board piece.knight.white {
+  background-image: url('images/pieces/merida/wN.svg');
+}
+.merida .cg-board piece.rook.white {
+  background-image: url('images/pieces/merida/wR.svg');
+}
+.merida .cg-board piece.queen.white {
+  background-image: url('images/pieces/merida/wQ.svg');
+}
+.merida .cg-board piece.king.white {
+  background-image: url('images/pieces/merida/wK.svg');
+}
+.merida .cg-board piece.pawn.black {
+  background-image: url('images/pieces/merida/bP.svg');
+}
+.merida .cg-board piece.bishop.black {
+  background-image: url('images/pieces/merida/bB.svg');
+}
+.merida .cg-board piece.knight.black {
+  background-image: url('images/pieces/merida/bN.svg');
+}
+.merida .cg-board piece.rook.black {
+  background-image: url('images/pieces/merida/bR.svg');
+}
+.merida .cg-board piece.queen.black {
+  background-image: url('images/pieces/merida/bQ.svg');
+}
+.merida .cg-board piece.king.black {
+  background-image: url('images/pieces/merida/bK.svg');
+}
+
+
+.cburnett .cg-board piece.pawn.white {
+  background-image: url('images/pieces/cburnett/wP.svg');
+}
+.cburnett .cg-board piece.bishop.white {
+  background-image: url('images/pieces/cburnett/wB.svg');
+}
+.cburnett .cg-board piece.knight.white {
+  background-image: url('images/pieces/cburnett/wN.svg');
+}
+.cburnett .cg-board piece.rook.white {
+  background-image: url('images/pieces/cburnett/wR.svg');
+}
+.cburnett .cg-board piece.queen.white {
+  background-image: url('images/pieces/cburnett/wQ.svg');
+}
+.cburnett .cg-board piece.king.white {
+  background-image: url('images/pieces/cburnett/wK.svg');
+}
+.cburnett .cg-board piece.pawn.black {
+  background-image: url('images/pieces/cburnett/bP.svg');
+}
+.cburnett .cg-board piece.bishop.black {
+  background-image: url('images/pieces/cburnett/bB.svg');
+}
+.cburnett .cg-board piece.knight.black {
+  background-image: url('images/pieces/cburnett/bN.svg');
+}
+.cburnett .cg-board piece.rook.black {
+  background-image: url('images/pieces/cburnett/bR.svg');
+}
+.cburnett .cg-board piece.queen.black {
+  background-image: url('images/pieces/cburnett/bQ.svg');
+}
+.cburnett .cg-board piece.king.black {
+  background-image: url('images/pieces/cburnett/bK.svg');
+}
+
+
+.pirouetti .cg-board piece.pawn.white {
+  background-image: url('images/pieces/pirouetti/wP.svg');
+}
+.pirouetti .cg-board piece.bishop.white {
+  background-image: url('images/pieces/pirouetti/wB.svg');
+}
+.pirouetti .cg-board piece.knight.white {
+  background-image: url('images/pieces/pirouetti/wN.svg');
+}
+.pirouetti .cg-board piece.rook.white {
+  background-image: url('images/pieces/pirouetti/wR.svg');
+}
+.pirouetti .cg-board piece.queen.white {
+  background-image: url('images/pieces/pirouetti/wQ.svg');
+}
+.pirouetti .cg-board piece.king.white {
+  background-image: url('images/pieces/pirouetti/wK.svg');
+}
+.pirouetti .cg-board piece.pawn.black {
+  background-image: url('images/pieces/pirouetti/bP.svg');
+}
+.pirouetti .cg-board piece.bishop.black {
+  background-image: url('images/pieces/pirouetti/bB.svg');
+}
+.pirouetti .cg-board piece.knight.black {
+  background-image: url('images/pieces/pirouetti/bN.svg');
+}
+.pirouetti .cg-board piece.rook.black {
+  background-image: url('images/pieces/pirouetti/bR.svg');
+}
+.pirouetti .cg-board piece.queen.black {
+  background-image: url('images/pieces/pirouetti/bQ.svg');
+}
+.pirouetti .cg-board piece.king.black {
+  background-image: url('images/pieces/pirouetti/bK.svg');
+}
+
+
+.pirouetti-invert .cg-board piece.pawn.white {
+  background-image: url('images/pieces/pirouetti/invert/wP.svg');
+}
+.pirouetti-invert .cg-board piece.bishop.white {
+  background-image: url('images/pieces/pirouetti/invert/wB.svg');
+}
+.pirouetti-invert .cg-board piece.knight.white {
+  background-image: url('images/pieces/pirouetti/invert/wN.svg');
+}
+.pirouetti-invert .cg-board piece.rook.white {
+  background-image: url('images/pieces/pirouetti/invert/wR.svg');
+}
+.pirouetti-invert .cg-board piece.queen.white {
+  background-image: url('images/pieces/pirouetti/invert/wQ.svg');
+}
+.pirouetti-invert .cg-board piece.king.white {
+  background-image: url('images/pieces/pirouetti/invert/wK.svg');
+}
+.pirouetti-invert .cg-board piece.pawn.black {
+  background-image: url('images/pieces/pirouetti/invert/bP.svg');
+}
+.pirouetti-invert .cg-board piece.bishop.black {
+  background-image: url('images/pieces/pirouetti/invert/bB.svg');
+}
+.pirouetti-invert .cg-board piece.knight.black {
+  background-image: url('images/pieces/pirouetti/invert/bN.svg');
+}
+.pirouetti-invert .cg-board piece.rook.black {
+  background-image: url('images/pieces/pirouetti/invert/bR.svg');
+}
+.pirouetti-invert .cg-board piece.queen.black {
+  background-image: url('images/pieces/pirouetti/invert/bQ.svg');
+}
+.pirouetti-invert .cg-board piece.king.black {
+  background-image: url('images/pieces/pirouetti/invert/bK.svg');
+}
