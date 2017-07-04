@@ -58,6 +58,6 @@ storiesOf('Chessground', module)
 }))
 .add('Garbochess worker IA  white VS Garbochess worker IA', () => ({
   render(h) {
-    return h(Board, { props: { vsIA: {isVsIA: true, color: 'all', delay: 300, mode: 'worker'},mode: {'white':false,'black':false} } });
+    return h(Board, { props: { vsIa: {isVsIA: true, color: 'all', delay: 300, mode: 'worker'},mode: {'white':false,'black':false} } });
   },
 }))

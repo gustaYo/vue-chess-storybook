@@ -6,16 +6,30 @@ import {
   number,
 } from '@storybook/addon-knobs';
 
-import BoardTimer from './boardTimer.vue';
-Vue.component('board-timer', BoardTimer)
+import BoardTimer from './timer.vue';
+import ManagerTimer from './managerTimes.vue';
+
+import {store} from './store'
 
 storiesOf('BoardTimer', module)
-  .add('default', () => ({
+  .add('Default', () => ({
     components: { BoardTimer },
+    store: store,
     template: '<board-timer></board-timer>',
   }))
-    .add('custom time', () => ({
+  .add('Default start', () => ({
+    components: { BoardTimer },
+    store: store,
+    template: '<board-timer :keyname="idBoard" :active="true"></board-timer>',
+    data () {
+      return {
+        idBoard: 'someID'
+      }
+    }  
+  }))
+  .add('Example complete', () => ({
     render(h) {
-      return h(BoardTimer, { props: { time: 70 } });
+      return h(ManagerTimer);
     },
   }))
+

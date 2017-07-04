@@ -57,7 +57,7 @@ var stylesBoard = {
       rounded: Boolean,
       handleClick: {
         default: () => () => null
-      },      
+      },
       fen: {
         default: ''
       },
@@ -75,6 +75,7 @@ var stylesBoard = {
         ground: 0,   
         stylesBoard: stylesBoard,
         stateGame: {},
+        loopTime: 0
       }
     },
     events: {
@@ -92,7 +93,7 @@ var stylesBoard = {
       runVsIA () {
         if(this.vsIa.isVsIA){
           if((this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'){
-                setTimeout(function () {
+                this.loopTime = setTimeout(function () {
                   aiPlay(this.chess,this.vsIa.mode).then((move) => {
                     this.move({move: move})
                   })
@@ -115,8 +116,13 @@ var stylesBoard = {
       }
     },
     created () {
+      clearTimeout(this.loopTime)
       console.log('componente created')      
     },
+    destroyed () {
+      clearTimeout(this.loopTime)
+      console.log('componente destroyed')
+    },    
     mounted () {
       this.chess = new MyChess();
       this.ground = Chessground(this.$refs.sboard, {
