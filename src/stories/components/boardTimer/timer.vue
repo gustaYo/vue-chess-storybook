@@ -15,13 +15,13 @@
       active: {
         type: Boolean,
         default: false
-      },      
+      },
       keyname: {
         default: 'vue-chess'
       },
       color: {
         default: 'b'
-      },   
+      },
       className: {
         default: 'flat-text-board-timer'
       }

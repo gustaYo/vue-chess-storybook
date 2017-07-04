@@ -54,7 +54,10 @@ var stylesBoard = {
           return {board: 1,pieces: 0}  
         }  
       },
-      rounded: Boolean,
+      active: {
+        type: Boolean,
+        default: true
+      },
       handleClick: {
         default: () => () => null
       },
@@ -70,7 +73,6 @@ var stylesBoard = {
     },
     data () {
       return {
-        active: true,
         chess: {},
         ground: 0,   
         stylesBoard: stylesBoard,
@@ -106,18 +108,27 @@ var stylesBoard = {
           changeBoardState(this.ground,this.chess,board, this.mode)
           this.stateGame = getGameState(this.chess)
           this.runVsIA()
+          this.$emit('move', board)
+          const fen = this.chess.fen()
+          this.$emit('update:fen', fen)
         }else{
           console.log(this.stateGame)
-        }        
+        }
       },
       onMove (orig, dest) {
         const move = {move:{from: orig, to: dest}};
         this.move(move)
+      },
+      endGame (){
+        clearTimeout(this.loopTime)
+        this.ground.stop()
+        var boardData={}
+        this.$emit('endGame',boardData)
       }
     },
     created () {
       clearTimeout(this.loopTime)
-      console.log('componente created')      
+      console.log('componente created')
     },
     destroyed () {
       clearTimeout(this.loopTime)
@@ -142,16 +153,19 @@ var stylesBoard = {
         movable: { events: { after: this.onMove } }
       });
       this.move({fen:this.fen})
+      if(this.pgn !=''){
+        this.move({pgn:this.pgn})
+      }
     },    
     watch: {
-      fen (val, oldVal) {
-        console.log('new: %s, old: %s', val, oldVal)
-      },
       stateGame (val, oldVal) {
         if ((val.motiv && val.motiv !=='in_check')||val.finish) {
-          // game over
-          this.active = false
-          this.ground.stop()
+          this.endGame()
+        }
+      },
+      active (val, oldVal) {
+        if(!val){
+          this.endGame()
         }
       }      
     }
