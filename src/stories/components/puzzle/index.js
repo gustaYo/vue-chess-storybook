@@ -31,10 +31,40 @@ storiesOf('Puzzle', module)
     return h(Puzzle, {
         props: {
           numMoves: 2,
-          description: 'White is to begin and checkmate in two move.',
+          description: 'Monterinas vs Max Euwe, Amsterdam, 1927. Euwe (black) moves and wins in 2.',
           type:"Mate in 2",
+          userColor: 'b',
           position: false,
-          fenInit: '7R/8/8/8/6pq/7k/4Np1r/5KbQ w KQkq - 1 2'
+          fenInit: '7r/p3ppk1/3p4/2p1P1Kp/2Pb4/3P1QPq/PP5P/R6R b KQkq - 1 2',
+          solutions:[['Bd4-e3','Qh3-g4']]
+        }
+      });
+  },
+}))
+.add('Mate in 3', () => ({
+  render(h) {
+    return h(Puzzle, {
+        props: {
+          numMoves: 3,
+          description: 'Alexander Alekhine vs Freeman, New York, 1924. Alekhine wins in 3',
+          type:"Mate in 3",
+          position: false,
+          fenInit: '4Rnk1/pr3ppp/1p3q2/5NQ1/2p5/8/P4PPP/6K1 w KQkq - 2 1',
+          solutions:['Nf5-h6','Re8xf8','Qg5-d8']
+        }
+      });
+  },
+}))
+.add('Mate in 4', () => ({
+  render(h) {
+    return h(Puzzle, {
+        props: {
+          numMoves: 4,
+          description: 'Veselin Topalov vs Garry Kasparov, Moscow, 1994. Topalov with white moves and wins in 4.',
+          type:"Mate in 4",
+          position: false,
+          fenInit: '4k2r/1R3R2/p3p1pp/4b3/1BnNr3/8/P1P5/5K2 w KQkq - 1 2',
+          solutions:[['Rf7-e7','Nd4-c6','Nc6-a7', 'Rb7-d7'],['Rf7-e6','Nd4-c6','Re7-e8']]
         }
       });
   },

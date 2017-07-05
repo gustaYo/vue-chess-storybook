@@ -14,22 +14,32 @@
   background-size: cover;
 }
 
-.light-wood-3d .cg-board-wrap {
-  position: relative;
-  background-image: url('images/board/3d/Light-Wood.png');
-  background-size: cover;
-}
-
-.in3d .cg-board-wrap {
-  background-size: cover;
-  background-image: url('images/board/3d/woodi.1024.png');
-}
-
 .blue2 .cg-board-wrap {
   position: relative;
   background-image: url('images/board/blue2.jpg');
   background-size: cover;
 }
+
+
+.gray .cg-board-wrap{
+  position: relative;
+  background-image: url(images/board/gray.svg);
+  background-size: cover;
+}
+
+.gray-hi .cg-board-wrap{
+  position: relative;
+  background-image: url(images/board/gray-hi.png);
+  background-size: cover;
+}
+
+.red .cg-board-wrap{
+  position: relative;
+  background-image: url(images/board/red.png);
+  background-size: cover;
+}
+
+
 
 .light-wood-3d .cg-board {
   position: absolute;

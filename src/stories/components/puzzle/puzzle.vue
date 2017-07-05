@@ -7,14 +7,18 @@
       :mode="mode"
       @update:fen="val => {fen = val}"
       :active="active"
+      :orientation="orientation"
+      :current-style="boardTheme"
        ></board>
     <div v-if="wins">
       <h2>wins</h2>
     </div>
     <br />
-    {{type}}
+    type: {{type}}
     <br />
-    {{description}}
+    description: {{description}}
+        <br />
+    solutions: {{solutions}}
     <br />
     {{fen}}
     <br />
@@ -37,6 +41,15 @@ import MyChess from 'chess.js'
         type: Number,
         default: 1
       },
+      userColor:{
+        default: 'w'
+      },
+      solutions: {
+        type: Array,
+        default: function(){
+          return []
+        }
+      },
       type: {
         default: 'Find Fork'
       },
@@ -47,12 +60,6 @@ import MyChess from 'chess.js'
         type: Boolean,
         default: true
       },
-      turn: {
-        default: 'white'
-      },
-      userColor: {
-        default: 'white'
-      },      
       fenInit: {
         default: 'R4q1k/6p1/7p/2b4N/8/2B5/1PP2r2/1K5R w KQkq - 0 2'
       },
@@ -62,12 +69,17 @@ import MyChess from 'chess.js'
     },
     data () {
       return {
+        boardTheme:{
+          board: 3,
+          pieces: 3
+        },
         moves: (parseInt(this.numMoves) * 2) -1 ,
         wins: false,
         active: true,
+        orientation: this.userColor==='w'?'white':'black',
         fen: '',
-        vsIA: {isVsIA: !this.position, color: 'b', delay: 1000, mode: 'random'},
-        mode: {'white':this.userColor==='white','black':this.userColor==='black'}
+        vsIA: {isVsIA: !this.position, color: this.userColor==='w'?'b':'w', delay: 1000, mode: 'random'},
+        mode: {'white':this.userColor==='w','black':this.userColor==='b'}
       }
     },
     components:{
@@ -76,6 +88,10 @@ import MyChess from 'chess.js'
     methods: {
       move (board) {
         console.log(board)
+      },
+      getTurn(){
+        let chess = new MyChess(this.fen)
+        return chess.turn()
       },
       isGameOver(){
         let chess = new MyChess(this.fen)

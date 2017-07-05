@@ -96,7 +96,14 @@ export function changeBoardState(cg,chess,board,mode) {
       chess.load_pgn(board.pgn)
     }else{
       if(board.fen){
-        chess.load(board.fen)
+        if(!chess.load(board.fen)){
+          var valid = chess.validate_fen(board.fen);
+          console.log(valid)
+          cg.set({
+            fen: board.fen
+          })
+          chess.load(cg.getFen()+' w KQkq - 1 2')
+        }
       }
     }
   }
@@ -110,7 +117,7 @@ export function changeBoardState(cg,chess,board,mode) {
   })
 }
 
-import GarbochessWorker from 'worker-loader!./assets/garbochess';
+import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
 
 export function aiGarbochessWorkerPlay(fen) {
   var GarbochessWork = new GarbochessWorker();

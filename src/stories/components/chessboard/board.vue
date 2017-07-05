@@ -17,12 +17,12 @@ import {Chessground}  from 'chessground';
 import MyChess from 'chess.js'
 import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
 
-import './assets/boardSkin.css'
-import './assets/chessground.css'
-import './assets/pieces.css'
+import './assets/css/boardSkin.css'
+import './assets/css/chessground.css'
+import './assets/css/pieces.css'
 
 var stylesBoard = {
-  board: ['blue','blue2', 'wood', 'marble','light-wood-3d', 'in3d'],
+  board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
   pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton']
 }
   export default {
@@ -156,7 +156,7 @@ var stylesBoard = {
       if(this.pgn !=''){
         this.move({pgn:this.pgn})
       }
-    },    
+    },
     watch: {
       stateGame (val, oldVal) {
         if ((val.motiv && val.motiv !=='in_check')||val.finish) {
