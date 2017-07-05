@@ -25,6 +25,7 @@ var stylesBoard = {
   board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
   pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton']
 }
+var loopTime = 1;
   export default {
     props: {
       vsIa:{
@@ -77,7 +78,7 @@ var stylesBoard = {
         ground: 0,   
         stylesBoard: stylesBoard,
         stateGame: {},
-        loopTime: 0
+        loopTime: 1
       }
     },
     events: {
@@ -95,11 +96,13 @@ var stylesBoard = {
       runVsIA () {
         if(this.vsIa.isVsIA){
           if((this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'){
-                this.loopTime = setTimeout(function () {
-                  aiPlay(this.chess,this.vsIa.mode).then((move) => {
-                    this.move({move: move})
-                  })
-                }.bind(this), this.vsIa.delay)
+            setTimeout(() => {
+              aiPlay(this.chess,this.vsIa.mode).then((move) => {
+                if (this.loopTime) {
+                  this.move({move: move})
+                }                
+              })
+            }, this.vsIa.delay)
           }
         }
       },
@@ -119,20 +122,20 @@ var stylesBoard = {
         const move = {move:{from: orig, to: dest}};
         this.move(move)
       },
-      endGame (){
-        clearTimeout(this.loopTime)
+      stopGame(){
+        this.loopTime = false
         this.ground.stop()
+      },
+      endGame (){
+        this.stopGame()
         var boardData={}
         this.$emit('endGame',boardData)
       }
     },
     created () {
-      clearTimeout(this.loopTime)
-      console.log('componente created')
     },
-    destroyed () {
-      clearTimeout(this.loopTime)
-      console.log('componente destroyed')
+    beforeDestroy () {
+      this.stopGame()
     },    
     mounted () {
       this.chess = new MyChess();
