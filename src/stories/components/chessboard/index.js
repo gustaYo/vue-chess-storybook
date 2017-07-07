@@ -31,6 +31,36 @@ storiesOf('Chessground', module)
     return h(Board, { props: { mode: {'white':true,'black':false} } });
   },
 }))
+  .add('Adding external move', () => ({
+    components: { Board },
+    template: '<board v-on:move="onMove" :external-move="move"></board>',
+    data () {
+      return {
+        move:{}
+      }
+    },
+    methods:{
+      onMove(...parms){
+        if (parms[0].move) {
+          action('move')(parms[0].move);
+        }
+      }
+    },
+    created(){
+      setTimeout(() => {
+        this.move = {
+          from: 'e2',
+          to: 'e4'
+        }
+        setTimeout(() => {
+          this.move = {
+            from: 'e7',
+            to: 'e5'
+          }
+        },1000)
+      },2000)
+    }
+  }))
 .add('Play legal moves from fen position', () => ({
   render(h) {
     return h(Board, { props: { fen: '4r3/8/2p2PPk/1p6/pP2p1R1/P1B5/2P2K2/3r4 w - - 1 45' } });

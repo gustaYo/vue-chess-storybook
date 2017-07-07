@@ -1,13 +1,13 @@
 <template>
 
-  <div style="width: 300px">
-    <ul class="history-board">
-      <li v-for="(move, index) in history" @click="moveToHistory(index)" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
+  <div style="width: 300px" >
+    <ul class="history-board" ref="containerMoves">
+      <li v-for="(move, index) in history" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
           <label v-if="index % 2 ===0">{{ (index/2)+1 }}.</label>
           <img alt="" v-bind:src="urlPiece(move)" height="25" width="25">
           <label>{{ move.from }}>{{ move.to }} {{ move.san }}</label>
-        </span>            
+        </span>
       </li>
     </ul>
     <div class="button-moves" v-show="!active">
@@ -28,6 +28,9 @@
 </template>
 
 <script>
+
+import Jquery from 'jquery'
+
 var playEvent = 1
 export default {
   name: 'BoardHistory',
@@ -38,33 +41,34 @@ export default {
     active: {
       type: Boolean,
       required: false,
-      'default': false
+      default: false
     },
-    humanvspc: {
-      type: Function,
+    vsIa: {
+      type: Boolean,
       required: false,
-      'default': function () {
-        return false
-      }
-    },
+      default: false
+    },    
     handleMove: {
       type: Function,
       required: false,
-      'default': function () {
+      default: function () {
         return {}
       }
-    }    
+    },
+    pieces:{
+      default: 'picture'
+    }
   },
   data () {
     return {
       velo: 2,
       select: -1,
-      played: false
+      played: false,
     }
   },
   methods: {
-    urlPiece (move) {      
-      return '/images/pieces/merida/' + move.color + move.piece.toUpperCase() + '.svg'
+    urlPiece (move) {
+      return '/images/pieces/'+this.pieces+'/' + move.color + move.piece.toUpperCase() + '.svg'
     },
     moveToHistory (index) {
       if (index < 0 || index > this.history.length - 1) {
@@ -83,15 +87,17 @@ export default {
         pgnReturn += this.history[i].san + ' '
       }
       if (!this.active) {
-        this.$emit('move', {pgn: pgnReturn})
-        this.handleMove({pgn: pgnReturn})
+          this.sendEvent(pgnReturn)
         return
       }
-      if (this.humanvspc()) {
-        this.$emit('move', {pgn: pgnReturn})
-        this.handleMove({pgn: pgnReturn})
+      if (this.vsIa) {
+        this.sendEvent(pgnReturn)
         return
       }
+    },
+    sendEvent(pgn){
+      this.$emit('move', {pgn: pgn})
+      this.handleMove({pgn: pgn})
     },
     play () {
       this.played = !this.played
@@ -109,7 +115,25 @@ export default {
       clearInterval(playEvent)
       this.played = false
       this.play()
-    }
+    },
+    select (newVal, oldVal) {
+      var divScroll = this.$refs.containerMoves
+      //var atBottom = divScroll.scrollTop >= divScroll.scrollHeight - divScroll.clientHeight
+      var el = this.$refs['item'+newVal]
+      var position = Jquery(el).position();
+      var top = 0
+      if (divScroll.clientHeight <= position.top + 10) {
+        top = divScroll.scrollTop + divScroll.clientHeight/2
+      }
+      if (position.top-10<0) {
+        top = divScroll.scrollTop - divScroll.clientHeight/2        
+      }
+      if(top!==0){
+        Jquery(divScroll).stop(0,0).animate({
+          'scrollTop': top
+        }, 'slow')
+      }    
+    }    
   }
 }
 </script>
@@ -121,8 +145,13 @@ export default {
   padding: 1px;
 }
 
+ul.history-board li {
+    display: inline-block;
+    margin: 0 0px;
+}
+
 ul.history-board li{
-  width: 43%;
+  width: 48%;
   float: left;
   list-style-type: none;
 }

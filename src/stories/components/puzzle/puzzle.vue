@@ -46,7 +46,7 @@ import MyChess from 'chess.js'
       },
       solutions: {
         type: Array,
-        default: function(){
+        default: () => {
           return []
         }
       },

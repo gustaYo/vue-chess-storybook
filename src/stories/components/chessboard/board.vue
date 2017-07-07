@@ -23,20 +23,20 @@ import './assets/css/pieces.css'
 
 var stylesBoard = {
   board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
-  pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton']
+  pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton','picture']
 }
 var loopTime = 1;
   export default {
     props: {
       vsIa:{
         type: Object,
-        default: function () {
+        default: () => {
           return {isVsIA: false, color: 'w', delay: 1000, mode: 'random'}
         }
       },
       mode: {
         type: Object,
-        default: function(){
+        default: () => {
           return {
             'white': true,
             'black': true
@@ -45,14 +45,17 @@ var loopTime = 1;
       },
       dimentions: {
         type: Object,
-        default: function () {
+        default: () => {
           return {width: '420px', height: '420px'}
         }
       },
       currentStyle: {
         type: Object,
-        default: function () {
-          return {board: 1,pieces: 0}  
+        default: () => {
+          return {
+            board: 1,
+            pieces: 0
+          }
         }  
       },
       active: {
@@ -70,6 +73,15 @@ var loopTime = 1;
       },
       orientation: {
         default: 'white'
+      },
+      externalMove: {
+        type: Object,
+        default: () => {
+          return {
+            from: 'e2',
+            to: 'e4'
+          }
+        }
       }
     },
     data () {
@@ -81,11 +93,6 @@ var loopTime = 1;
         loopTime: 1
       }
     },
-    events: {
-      move (board) {
-        this.move(board)
-      },
-    },  
     methods: {
       changeOrientation () {
         this.orientation = this.orientation === 'white' ? 'black' : 'white'
@@ -112,14 +119,14 @@ var loopTime = 1;
           this.stateGame = getGameState(this.chess)
           this.runVsIA()
           this.$emit('move', board)
-          const fen = this.chess.fen()
+          let fen = this.chess.fen()
           this.$emit('update:fen', fen)
         }else{
           console.log(this.stateGame)
         }
       },
       onMove (orig, dest) {
-        const move = {move:{from: orig, to: dest}};
+        let move = {move:{from: orig, to: dest}};
         this.move(move)
       },
       stopGame(){
@@ -128,7 +135,7 @@ var loopTime = 1;
       },
       endGame (){
         this.stopGame()
-        var boardData={}
+        let boardData={}
         this.$emit('endGame',boardData)
       }
     },
@@ -161,8 +168,14 @@ var loopTime = 1;
       }
     },
     watch: {
+      fen (val, oldVal) {
+        this.move({fen:val})
+      },      
+      pgn (val, oldVal) {
+        this.move({pgn:val})
+      },
       stateGame (val, oldVal) {
-        if ((val.motiv && val.motiv !=='in_check')||val.finish) {
+        if (val.motiv && val.motiv !=='in_check') {
           this.endGame()
         }
       },
@@ -170,7 +183,10 @@ var loopTime = 1;
         if(!val){
           this.endGame()
         }
-      }      
+      },
+      externalMove (val, oldVal) {
+        this.onMove(val.from, val.to)
+      }
     }
   }
 </script>

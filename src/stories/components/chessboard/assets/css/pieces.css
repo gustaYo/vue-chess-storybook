@@ -149,3 +149,42 @@
 .pirouetti-invert .cg-board piece.king.black {
   background-image: url('images/pieces/pirouetti/invert/bK.svg');
 }
+
+
+.picture .cg-board piece.pawn.white {
+  background-image: url('images/pieces/picture/wP.svg');
+}
+.picture .cg-board piece.bishop.white {
+  background-image: url('images/pieces/picture/wB.svg');
+}
+.picture .cg-board piece.knight.white {
+  background-image: url('images/pieces/picture/wN.svg');
+}
+.picture .cg-board piece.rook.white {
+  background-image: url('images/pieces/picture/wR.svg');
+}
+.picture .cg-board piece.queen.white {
+  background-image: url('images/pieces/picture/wQ.svg');
+}
+.picture .cg-board piece.king.white {
+  background-image: url('images/pieces/picture/wK.svg');
+}
+.picture .cg-board piece.pawn.black {
+  background-image: url('images/pieces/picture/bP.svg');
+}
+.picture .cg-board piece.bishop.black {
+  background-image: url('images/pieces/picture/bB.svg');
+}
+.picture .cg-board piece.knight.black {
+  background-image: url('images/pieces/picture/bN.svg');
+}
+.picture .cg-board piece.rook.black {
+  background-image: url('images/pieces/picture/bR.svg');
+}
+.picture .cg-board piece.queen.black {
+  background-image: url('images/pieces/picture/bQ.svg');
+}
+.picture .cg-board piece.king.black {
+  background-image: url('images/pieces/picture/bK.svg');
+}
+
