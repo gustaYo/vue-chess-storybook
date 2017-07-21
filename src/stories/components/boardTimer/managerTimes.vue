@@ -2,7 +2,7 @@
   <div>
     components
     <br />
-    <timer  v-for="n in 1" :key="n" :time="60*n*1000" :keyname="'idBoard-'+n" :color="'w'" :active="activeCountDown" ></timer>
+    <timer  v-for="n in 5" :key="n" :time="60*n*1000" :keyname="'idBoard-'+n" :color="'w'" :active="activeCountDown" ></timer>
     <timer :time="70*1000" :keyname="'idsomeboardfg'" :color="'b'"></timer>
     <button @click="toogleCountDown">
      {{ activeCountDown ? 'Stop' : 'Start' }}
