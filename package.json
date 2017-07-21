@@ -35,8 +35,10 @@
     "jquery": "^3.2.1",
     "object-assign": "^4.1.1",
     "vue": "^2.0.0",
+    "vue-clock": "^0.3.1",
     "vue-waypoint": "^2.4.0",
     "vue-worker": "^1.2.1",
+    "vue2-countdown": "^1.0.8",
     "vuex": "^2.0.0"
   },
   "scripts": {

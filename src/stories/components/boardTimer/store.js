@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
   mutations: {
     countDown (state, parms) {
       try{
-        var newVal=state.board[parms.keyName].times[parms.c] - 1
+        var newVal=state.board[parms.keyName].times[parms.c] - 10
         Vue.set(state.board[parms.keyName].times,parms.c, newVal)
       }
       catch (err){
@@ -47,7 +47,7 @@ export const store = new Vuex.Store({
           dispatch('finishTime',parms)
         }
       }
-      , 1000);
+      , 10);
     },
     finishTime ({commit,state},parms) {
       state.board[parms.keyName].times[parms.c] = 0

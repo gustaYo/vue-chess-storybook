@@ -10,7 +10,7 @@
     props: {
       time: {
         type: Number,
-        default: 10
+        default: 70*1000
       },
       active: {
         type: Boolean,
@@ -33,10 +33,12 @@
       }
     },
     filters: {
-      boardTime (s) {
+      boardTime (s) {        
+        var s = s/1000
         var min = parseInt(s / 60)
-        var segs = s % 60
-        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2)
+        var segs = parseInt(s % 60)
+        var milisecons =s / 100
+        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2) + ':' + ('0' +  milisecons).slice(-2)
       }
     },
     watch: {
