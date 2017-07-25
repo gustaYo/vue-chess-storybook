@@ -98,7 +98,6 @@ export function changeBoardState(cg,chess,board,mode) {
       if(board.fen){
         if(!chess.load(board.fen)){
           var valid = chess.validate_fen(board.fen);
-          console.log(valid)
           cg.set({
             fen: board.fen
           })
@@ -107,14 +106,20 @@ export function changeBoardState(cg,chess,board,mode) {
       }
     }
   }
+  var fen = chess.fen()
+  var pgn = chess.pgn()
   cg.set({
-    fen: chess.fen(),
+    fen: fen,
     turnColor: toColor(chess),
     movable: {
       color: toColor(chess,mode),
       dests: toDests(chess)
     }
   })
+  return {
+    pgn: pgn,
+    fen: fen
+  }
 }
 
 import GarbochessWorker from 'worker-loader!./assets/js/garbochess';

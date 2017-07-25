@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
   mutations: {
     countDown (state, parms) {
       try{
-        var newVal=state.board[parms.keyName].times[parms.c] - 10
+        var newVal=state.board[parms.keyName].times[parms.c] - 9
         Vue.set(state.board[parms.keyName].times,parms.c, newVal)
       }
       catch (err){
@@ -19,6 +19,9 @@ export const store = new Vuex.Store({
     },
     updateStateBoard (state, newState) {
       Vue.set(state,'board', deepmerge(state.board, newState))
+    },
+    changeTime (state, parms) {
+      Vue.set(state.board[parms.keyName].times,parms.c, parms.time)
     },
     initTime (state, parms) {
       var indexName = parms.keyName    
@@ -34,7 +37,7 @@ export const store = new Vuex.Store({
           Vue.set(state.board[indexName].times,parms.c, parms.time)
         }
       }
-    }  
+    }
   },
   actions: {
     countDown ({dispatch, commit, state},parms) {
@@ -53,7 +56,7 @@ export const store = new Vuex.Store({
       state.board[parms.keyName].times[parms.c] = 0
       clearInterval(timesLoop[parms.keyName])
       timesLoop[parms.keyName] = null
-      delete timesLoop[parms.keyName] 
+      delete timesLoop[parms.keyName]
     },
     stopCountDown ({commit},parms) {
       clearInterval(timesLoop[parms.keyName])

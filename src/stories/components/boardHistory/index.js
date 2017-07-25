@@ -6,11 +6,39 @@ import MyChess from 'chess.js'
 
 import BoardHistory from './boardHistory.vue';
 import Board from '../chessboard/board.vue';
+
+import {store} from '../boardTimer/store'
+
 Vue.component('board-history', BoardHistory)
 
 //http://www.pgnmentor.com/files.html
-var pgnLoadTest = '1.d4 d5 2.c4 c6'
+var pgnLoadTest = '1. e4 e5 2. Nf3 Nc6 3. Ng5 Qxg5 4. f4 exf4'
 
+var myMixin = {
+  store: store,
+  data () {
+    return {
+      pgn:pgnLoadTest,
+      history: [],
+      backHistory: false,
+      active: true,
+      useStore: true
+    }
+  },
+  methods: {
+    onHistoryChange(history) {
+      this.history = history
+    },
+    historyIndex({pgn}){
+      this.pgn = pgn
+    },
+    onMove ({move}) {
+      if(move){
+        console.log(move)
+      }
+    }
+  }
+}
 
 storiesOf('BoardHistory', module)
 
@@ -34,115 +62,44 @@ storiesOf('BoardHistory', module)
   },
 }))
 
-.add('Visor', () => ({
+.add('Visor not back history', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board :pgn="pgn" v-on:move="changePgn"></board></div><div style="float:left"><board-history :history="history" v-on:move="changePgn" :active="active"></board-history></div></div>',
+  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore"  @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
+  mixins: [myMixin]
+}))
+
+.add('Visor with back history', () => ({
+  components: { BoardHistory, Board },
+  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore" @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :back-history="backHistory" :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
   data () {
     return {
-      pgn:pgnLoadTest,
-      history: [],
-      chess: new MyChess(),
-      historyBack: false,
-      active: true,
+      backHistory: true
     }
-  },
-  methods: {
-    loadHistory(){
-      this.chess.load_pgn(this.pgn)
-      this.history = this.chess.history({ verbose: true })        
-    },
-    changePgn (board) {
-      if (board.pgn) {
-        this.pgn = board.pgn
-        if (this.historyBack) {
-          this.loadHistory()
-        }
-      }else{
-        if (board.move) {
-          board.move['promotion'] = 'q';
-          this.chess.move(board.move)
-          this.history = this.chess.history({ verbose: true })
-        }
-      }
-    }
-  },
-  mounted () {
-    this.loadHistory()
-  }
+  },  
+  mixins: [myMixin]
 }))
 
 .add('Visor read only', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board :mode="mode" :pgn="pgn" v-on:move="changePgn"></board></div><div style="float:left"><board-history :history="history" v-on:move="changePgn"></board-history></div></div>',
+  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex"></board-history></div></div>',
   data () {
     return {
-      pgn:pgnLoadTest,
-      history: [],
-      chess: new MyChess(),
-      historyBack: false,
       mode: {'white':false,'black':false}
     }
   },
-  methods: {
-    loadHistory(){
-      this.chess.load_pgn(this.pgn)
-      this.history = this.chess.history({ verbose: true })        
-    },
-    changePgn (board) {
-      if (board.pgn) {
-        this.pgn = board.pgn
-        if (this.historyBack) {
-          this.loadHistory()
-        }
-      }else{
-        if (board.move) {
-          board.move['promotion'] = 'q';
-          this.chess.move(board.move)
-          this.history = this.chess.history({ verbose: true })
-        }
-      }
-    }
-  },
-  mounted () {
-    this.loadHistory()
-  } 
+  mixins: [myMixin]
 }))
 
 .add('Visor user white VS PC IA worker', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board :vs-ia="vsIa" :mode="mode" :pgn="pgn" v-on:move="changePgn"></board></div><div style="float:left"><board-history :history="history" v-on:move="changePgn" :active="active" :vs-ia="vsIa.isVsIA"></board-history></div></div>',
+  template: '<div><br/><div style="float:left; padding: 10px;"><board use-store="useStore"  @update:history="onHistoryChange" :vs-ia="vsIa" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active" :back-history="backHistory"></board-history></div></div>',
   data () {
     return {
-      pgn:pgnLoadTest,
-      history: [],
-      chess: new MyChess(),
-      historyBack: true,
+      backHistory: true,
       active: true,
       mode: {'white':true,'black':false},
       vsIa: {isVsIA: true, color: 'b', delay: 300, mode: 'worker'}
     }
   },
-  methods: {
-    loadHistory(){
-      this.chess.load_pgn(this.pgn)
-      this.history = this.chess.history({ verbose: true })        
-    },
-    changePgn (board) {
-      if (board.pgn) {
-        this.pgn = board.pgn
-        if (this.historyBack) {
-          this.loadHistory()
-        }
-      }else{
-        if (board.move) {
-          board.move['promotion'] = 'q';
-          this.chess.move(board.move)
-          this.history = this.chess.history({ verbose: true })
-        }
-      }
-    }
-  },
-  mounted () {
-    this.loadHistory()
-  }
+  mixins: [myMixin]
 }))

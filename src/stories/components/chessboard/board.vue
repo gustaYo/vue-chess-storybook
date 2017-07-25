@@ -1,10 +1,10 @@
 <template>
-  <div class="chessground-component">
+  <div class="chessground-component" >
     <section v-bind:class="[stylesBoard['board'][currentStyle['board']],stylesBoard['pieces'][currentStyle['pieces']]]">
       <div
           ref="sboard"
           class="cg-board-wrap"
-          v-bind:style="[dimentions]"           
+          v-bind:style="[dimentions]"
        >
        </div>
     </section>
@@ -25,14 +25,16 @@ var stylesBoard = {
   board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
   pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton','picture']
 }
-var loopTime = 1;
   export default {
-    props: {
+      props: {
       vsIa:{
         type: Object,
         default: () => {
           return {isVsIA: false, color: 'w', delay: 1000, mode: 'random'}
         }
+      },
+      keyName: {
+        default: 'someId'
       },
       mode: {
         type: Object,
@@ -58,6 +60,10 @@ var loopTime = 1;
           }
         }  
       },
+      useStore: {
+        type: Boolean,
+        default: false
+      },      
       active: {
         type: Boolean,
         default: true
@@ -90,7 +96,7 @@ var loopTime = 1;
         ground: 0,   
         stylesBoard: stylesBoard,
         stateGame: {},
-        loopTime: 1
+        loopTime: true
       }
     },
     methods: {
@@ -101,26 +107,33 @@ var loopTime = 1;
         })
       },
       runVsIA () {
-        if(this.vsIa.isVsIA){
-          if((this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'){
-            setTimeout(() => {
-              aiPlay(this.chess,this.vsIa.mode).then((move) => {
-                if (this.loopTime) {
-                  this.move({move: move})
-                }                
-              })
-            }, this.vsIa.delay)
-          }
+        if(this.isIAColorTurn()){
+          setTimeout(() => {
+            aiPlay(this.chess,this.vsIa.mode).then((move) => {
+              if (this.isIAColorTurn()) {
+                this.move({move: move})
+              }                
+            })
+          }, this.vsIa.delay)
         }
+      },
+      isIAColorTurn(){
+        return this.loopTime && this.vsIa.isVsIA && (this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'
       },
       move (board) {
         if (this.active){
-          changeBoardState(this.ground,this.chess,board, this.mode)
+          var state= changeBoardState(this.ground,this.chess,board, this.mode)
           this.stateGame = getGameState(this.chess)
           this.runVsIA()
           this.$emit('move', board)
-          let fen = this.chess.fen()
-          this.$emit('update:fen', fen)
+          this.$emit('update:fen', state.fen)
+          var history = this.chess.history({ verbose: true })
+          this.$emit('update:history', history)
+          var board = {
+            fen: state.fen,
+            pgn: state.pgn
+          }
+          this.updateBoardState(board)
         }else{
           console.log(this.stateGame)
         }
@@ -137,9 +150,19 @@ var loopTime = 1;
         this.stopGame()
         let boardData={}
         this.$emit('endGame',boardData)
+      },
+      updateBoardState(state){
+        if (this.useStore) {
+          this.$store.commit('updateStateBoard',{[this.keyName]:state})
+        };        
       }
     },
     created () {
+      var board = {
+        fen: this.fen,
+        pgn: this.pgn
+      }
+      this.updateBoardState(board)
     },
     beforeDestroy () {
       this.stopGame()
@@ -170,12 +193,13 @@ var loopTime = 1;
     watch: {
       fen (val, oldVal) {
         this.move({fen:val})
-      },      
+      },
       pgn (val, oldVal) {
         this.move({pgn:val})
       },
       stateGame (val, oldVal) {
         if (val.motiv && val.motiv !=='in_check') {
+          console.log('finish',val)
           this.endGame()
         }
       },

@@ -33,12 +33,13 @@
       }
     },
     filters: {
-      boardTime (s) {        
+      boardTime (s) {
         var s = s/1000
         var min = parseInt(s / 60)
         var segs = parseInt(s % 60)
-        var milisecons =s / 100
-        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2) + ':' + ('0' +  milisecons).slice(-2)
+       // var milisecons =s / 100
+        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2)
+        
       }
     },
     watch: {
@@ -48,6 +49,9 @@
         }else{
           this.$store.dispatch('stopCountDown',{keyName: this.keyname})
         }
+      },
+      time (newVal, oldVal) {
+        this.$store.commit('changeTime',{keyName: this.keyname,c: this.color,time: newVal})
       }
     }    
   }

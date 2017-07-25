@@ -1,8 +1,8 @@
 <template>
 
-  <div style="width: 300px" >
+  <div style="width: 360px">
     <ul class="history-board" ref="containerMoves">
-      <li v-for="(move, index) in history" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
+      <li @dblclick="initPosition(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
           <label v-if="index % 2 ===0">{{ (index/2)+1 }}.</label>
           <img alt="" v-bind:src="urlPiece(move)" height="25" width="25">
@@ -43,11 +43,11 @@ export default {
       required: false,
       default: false
     },
-    vsIa: {
+    backHistory: {
       type: Boolean,
       required: false,
       default: false
-    },    
+    },
     handleMove: {
       type: Function,
       required: false,
@@ -64,14 +64,20 @@ export default {
       velo: 2,
       select: -1,
       played: false,
+      historyMove: []
     }
   },
   methods: {
+    initPosition(index){
+      if(index===0){
+        this.sendEvent('init')
+      }
+    },
     urlPiece (move) {
       return '/images/pieces/'+this.pieces+'/' + move.color + move.piece.toUpperCase() + '.svg'
     },
     moveToHistory (index) {
-      if (index < 0 || index > this.history.length - 1) {
+      if (index < 0 || index > this.historyMove.length - 1) {
         clearInterval(playEvent)
         this.played = false
         return
@@ -84,13 +90,13 @@ export default {
           jugada++
           pgnReturn += jugada + '. '
         }
-        pgnReturn += this.history[i].san + ' '
+        pgnReturn += this.historyMove[i].san + ' '
       }
       if (!this.active) {
           this.sendEvent(pgnReturn)
         return
       }
-      if (this.vsIa) {
+      if (this.backHistory) {
         this.sendEvent(pgnReturn)
         return
       }
@@ -102,15 +108,29 @@ export default {
     play () {
       this.played = !this.played
       if (this.played) {
-        playEvent = setInterval(function () {
+        playEvent = setInterval( () =>{
           this.moveToHistory(this.select + 1)
-        }.bind(this), parseInt(this.velo) * 1000)
+        }, parseInt(this.velo) * 1000)
       } else {
         clearInterval(playEvent)
       }
     }
   },
+  created () {
+    if(this.history.length>this.historyMove.length){
+      this.historyMove = this.history
+    }
+  },  
   watch: {
+    history (newVal, oldVal) {
+      if(this.historyMove.length<newVal.length){
+        this.historyMove = newVal
+      }else{
+        if (this.backHistory) {
+          this.historyMove = newVal
+        };
+      }
+    },
     velo (newVal, oldVal) {
       clearInterval(playEvent)
       this.played = false
@@ -151,7 +171,7 @@ ul.history-board li {
 }
 
 ul.history-board li{
-  width: 48%;
+  width: 50%;
   float: left;
   list-style-type: none;
 }
