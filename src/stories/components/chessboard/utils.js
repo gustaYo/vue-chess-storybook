@@ -105,9 +105,8 @@ export function changeBoardState(cg,chess,board,mode) {
         }
       }
     }
-  }
+  }  
   var fen = chess.fen()
-  var pgn = chess.pgn()
   cg.set({
     fen: fen,
     turnColor: toColor(chess),
@@ -116,35 +115,27 @@ export function changeBoardState(cg,chess,board,mode) {
       dests: toDests(chess)
     }
   })
+  var pgn = chess.pgn()
   return {
     pgn: pgn,
     fen: fen
   }
 }
 
-import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
 
-export function aiGarbochessWorkerPlay(fen) {
-  var GarbochessWork = new GarbochessWorker();
+
+export function aiGarbochessWorkerPlay(fen,GarbochessWork) {
   GarbochessWork.postMessage("position " + fen);
   var g_timeout= 1000
   GarbochessWork.postMessage("search " + g_timeout);
-  let ingenie = new Promise((resolve, reject) => {
-    GarbochessWork.addEventListener(
-      'message',
-      (e) => {
-        const move = e.data
-        console.log(move)
-        resolve(move)
-        GarbochessWork.terminate()
-        GarbochessWork = null
-      }
-    );
+  return new Promise((resolve, reject) => {
+    GarbochessWork.onmessage = (e) => {
+      resolve(e.data)
+    }
  })
-  return ingenie
 }
 
-export function aiPlay(chess, mode) {
+export function aiPlay(chess, mode, worker) {
   if(mode === 'random'){
     return new Promise((resolve, reject) => {
       const moves = chess.moves({verbose:true});
@@ -152,6 +143,6 @@ export function aiPlay(chess, mode) {
       resolve(move)
     })
   }else{
-    return aiGarbochessWorkerPlay(chess.fen())
+    return aiGarbochessWorkerPlay(chess.fen(),worker)
   }
 }

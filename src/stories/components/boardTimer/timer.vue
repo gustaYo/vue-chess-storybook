@@ -5,9 +5,10 @@
 </template>
 
 <script>
-
+import timerCountDown from 'worker-loader!./timeWorker.js';
   export default {
     props: {
+
       time: {
         type: Number,
         default: 70*1000
@@ -26,10 +27,44 @@
         default: 'flat-text-board-timer'
       }
     },
+    data () {
+      return {
+        timerWorker: new timerCountDown()
+      }
+    },
+    methods: {
+      changeTime (time) {
+        this.setTime(time)
+        this.$store.commit('changeTime',{keyName: this.keyname,c: this.color, time: time})
+      },
+      start_() {
+        this.timerWorker.postMessage(JSON.stringify({fun: 'start'}));
+      },
+      stop_() {
+        this.timerWorker.postMessage(JSON.stringify({fun: 'stop'}));
+      },
+      setTime (time) {
+        var men = {
+          fun: 'setTime',
+          arg: time
+        }
+        this.timerWorker.postMessage(JSON.stringify(men));         
+      },
+      initTime () {
+        this.$store.commit('initTime',{keyName: this.keyname,c: this.color, time: this.time})
+        this.timerWorker.addEventListener(
+          'message',
+          (e) => {
+            this.$store.commit('changeTime',{keyName: this.keyname,c: this.color, time: e.data})
+          }
+        )
+        this.setTime(this.time)
+      }
+    },  
     created () {
-      this.$store.commit('initTime',{keyName: this.keyname,c: this.color, time: this.time})
+      this.initTime()
       if (this.active){
-        this.$store.dispatch('countDown',{keyName: this.keyname,c: this.color})
+        this.start_() 
       }
     },
     filters: {
@@ -37,21 +72,23 @@
         var s = s/1000
         var min = parseInt(s / 60)
         var segs = parseInt(s % 60)
-       // var milisecons =s / 100
-        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2)
-        
+        return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2)        
       }
+    },
+    beforeDestroy () {
+      this.timerWorker.terminate()
+      this.timerWorker = null
     },
     watch: {
       active (newVal, oldVal) {
         if(newVal){
-          this.$store.dispatch('countDown',{keyName: this.keyname,c: this.color})
+          this.start_()
         }else{
-          this.$store.dispatch('stopCountDown',{keyName: this.keyname})
+          this.stop_()
         }
       },
       time (newVal, oldVal) {
-        this.$store.commit('changeTime',{keyName: this.keyname,c: this.color,time: newVal})
+        this.changeTime(newVal)
       }
     }    
   }

@@ -4,19 +4,9 @@ import deepmerge from 'deepmerge';
 var timesLoop = {}
 export const store = new Vuex.Store({
   state: {
-    board:{},
-    count: 12
+    board:{}
   },
   mutations: {
-    countDown (state, parms) {
-      try{
-        var newVal=state.board[parms.keyName].times[parms.c] - 9
-        Vue.set(state.board[parms.keyName].times,parms.c, newVal)
-      }
-      catch (err){
-        console.log('keyName not found')
-      }
-    },
     updateStateBoard (state, newState) {
       Vue.set(state,'board', deepmerge(state.board, newState))
     },
@@ -40,26 +30,8 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    countDown ({dispatch, commit, state},parms) {
-      clearInterval(timesLoop[parms.keyName])
-      timesLoop[parms.keyName]= setInterval(() =>
-      {
-        commit('countDown',parms)
-        if(state.board[parms.keyName].times[parms.c] <=0) {
-          parms.time = 0
-          dispatch('finishTime',parms)
-        }
-      }
-      , 10);
-    },
     finishTime ({commit,state},parms) {
       state.board[parms.keyName].times[parms.c] = 0
-      clearInterval(timesLoop[parms.keyName])
-      timesLoop[parms.keyName] = null
-      delete timesLoop[parms.keyName]
     },
-    stopCountDown ({commit},parms) {
-      clearInterval(timesLoop[parms.keyName])
-    }
   }
 })

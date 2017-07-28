@@ -64,13 +64,13 @@ storiesOf('BoardHistory', module)
 
 .add('Visor not back history', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore"  @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
+  template: '<div><div style="float:left; padding: 10px;"><board :use-store="useStore"  @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
   mixins: [myMixin]
 }))
 
 .add('Visor with back history', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore" @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :back-history="backHistory" :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
+  template: '<div><div style="float:left; padding: 10px;"><board :use-store="useStore" @update:history="onHistoryChange" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :back-history="backHistory" :history="history" v-on:move="historyIndex" :active="active"></board-history></div></div>',
   data () {
     return {
       backHistory: true
@@ -81,7 +81,7 @@ storiesOf('BoardHistory', module)
 
 .add('Visor read only', () => ({
   components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex"></board-history></div></div>',
+  template: '<div><div style="float:left; padding: 10px;"><board :use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex"></board-history></div></div>',
   data () {
     return {
       mode: {'white':false,'black':false}
@@ -92,7 +92,7 @@ storiesOf('BoardHistory', module)
 
 .add('Visor user white VS PC IA worker', () => ({
   components: { BoardHistory, Board },
-  template: '<div><br/><div style="float:left; padding: 10px;"><board use-store="useStore"  @update:history="onHistoryChange" :vs-ia="vsIa" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active" :back-history="backHistory"></board-history></div></div>',
+  template: '<div><br/><div style="float:left; padding: 10px;"><board :use-store="useStore"  @update:history="onHistoryChange" :vs-ia="vsIa" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active" :back-history="backHistory"></board-history></div></div>',
   data () {
     return {
       backHistory: true,

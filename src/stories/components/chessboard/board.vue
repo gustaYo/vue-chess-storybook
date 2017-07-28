@@ -15,6 +15,7 @@
 
 import {Chessground}  from 'chessground';
 import MyChess from 'chess.js'
+import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
 import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
 
 import './assets/css/boardSkin.css'
@@ -96,7 +97,8 @@ var stylesBoard = {
         ground: 0,   
         stylesBoard: stylesBoard,
         stateGame: {},
-        loopTime: true
+        loopTime: true,
+        garbochessWorker: {}
       }
     },
     methods: {
@@ -109,7 +111,7 @@ var stylesBoard = {
       runVsIA () {
         if(this.isIAColorTurn()){
           setTimeout(() => {
-            aiPlay(this.chess,this.vsIa.mode).then((move) => {
+            aiPlay(this.chess,this.vsIa.mode, this.garbochessWorker).then((move) => {
               if (this.isIAColorTurn()) {
                 this.move({move: move})
               }                
@@ -122,11 +124,13 @@ var stylesBoard = {
       },
       move (board) {
         if (this.active){
+          console.log('movee')
           var state= changeBoardState(this.ground,this.chess,board, this.mode)
           this.stateGame = getGameState(this.chess)
           this.runVsIA()
           this.$emit('move', board)
           this.$emit('update:fen', state.fen)
+          //this.$emit('update:pgn', state.pgn)
           var history = this.chess.history({ verbose: true })
           this.$emit('update:history', history)
           var board = {
@@ -163,9 +167,14 @@ var stylesBoard = {
         pgn: this.pgn
       }
       this.updateBoardState(board)
+      if (this.vsIa.isVsIA && this.vsIa.mode !== 'random') {
+        this.garbochessWorker = new GarbochessWorker()
+      };
     },
     beforeDestroy () {
       this.stopGame()
+      this.garbochessWorker.terminate()
+      this.garbochessWorker = null 
     },    
     mounted () {
       this.chess = new MyChess();
