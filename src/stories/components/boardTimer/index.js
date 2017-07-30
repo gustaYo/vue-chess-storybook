@@ -20,14 +20,15 @@ storiesOf('BoardTimer', module)
   .add('Default start', () => ({
     components: { BoardTimer },
     store: store,
-    template: '<board-timer :keyname="idBoard" :active="true"></board-timer>',
+    template: '<board-timer :keyname="idBoard" :active="active"></board-timer>',
     data () {
       return {
-        idBoard: 'someID'
+        idBoard: 'defaultStart',
+        active: true
       }
     }  
   }))
-  .add('Example complete', () => ({
+  .add('Many times', () => ({
     render(h) {
       return h(ManagerTimer);
     },

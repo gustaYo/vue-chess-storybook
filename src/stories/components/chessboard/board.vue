@@ -98,7 +98,8 @@ var stylesBoard = {
         stylesBoard: stylesBoard,
         stateGame: {},
         loopTime: true,
-        garbochessWorker: {}
+        garbochessWorker: {},
+        timesHistory: []
       }
     },
     methods: {
@@ -122,9 +123,38 @@ var stylesBoard = {
       isIAColorTurn(){
         return this.loopTime && this.vsIa.isVsIA && (this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'
       },
+      getTimeRegisterInGame () {
+        if (this.useStore) {
+          var history = this.chess.history()
+          var post = history.length-1
+          var time = 0
+          if (post>=0) {
+            time = this.timesHistory[post]    
+          }
+          var pp = {
+            keyName: this.keyName,
+            fun: 'setTime',
+            arg: {
+              [this.chess.turn()]: time
+            }
+          }
+          this.$store.commit('actionW',pp)
+        }
+
+      },
+      registerTimeMove (lengthHistory) {
+        if (this.useStore) {
+          if (this.timesHistory.length > lengthHistory) {
+            var times = this.timesHistory.slice(0,lengthHistory)
+            this.timesHistory = times
+          }else{
+            var time = this.$store.state.board[this.keyName].times[this.chess.turn()]
+            this.timesHistory.push(time)
+          }          
+        }        
+      },
       move (board) {
         if (this.active){
-          console.log('movee')
           var state= changeBoardState(this.ground,this.chess,board, this.mode)
           this.stateGame = getGameState(this.chess)
           this.runVsIA()
@@ -132,6 +162,12 @@ var stylesBoard = {
           this.$emit('update:fen', state.fen)
           //this.$emit('update:pgn', state.pgn)
           var history = this.chess.history({ verbose: true })
+          var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+          if (fenINit !==state.fen) {
+            this.registerTimeMove(history.length)
+          }else{
+            this.timesHistory = []
+          }          
           this.$emit('update:history', history)
           var board = {
             fen: state.fen,
@@ -139,7 +175,8 @@ var stylesBoard = {
           }
           this.updateBoardState(board)
         }else{
-          console.log(this.stateGame)
+          changeBoardState(this.ground,this.chess,board, this.mode)
+          this.getTimeRegisterInGame()
         }
       },
       onMove (orig, dest) {
@@ -152,8 +189,7 @@ var stylesBoard = {
       },
       endGame (){
         this.stopGame()
-        let boardData={}
-        this.$emit('endGame',boardData)
+        this.$emit('endGame',true)
       },
       updateBoardState(state){
         if (this.useStore) {
@@ -173,9 +209,11 @@ var stylesBoard = {
     },
     beforeDestroy () {
       this.stopGame()
-      this.garbochessWorker.terminate()
-      this.garbochessWorker = null 
-    },    
+      if (this.vsIa.isVsIA && this.vsIa.mode !== 'random') {
+        this.garbochessWorker.terminate()
+        this.garbochessWorker = null         
+      }
+    },
     mounted () {
       this.chess = new MyChess();
       this.ground = Chessground(this.$refs.sboard, {
@@ -208,9 +246,10 @@ var stylesBoard = {
       },
       stateGame (val, oldVal) {
         if (val.motiv && val.motiv !=='in_check') {
-          console.log('finish',val)
           this.endGame()
         }
+        this.$emit('update:state', val)
+        this.updateBoardState({state: val})
       },
       active (val, oldVal) {
         if(!val){

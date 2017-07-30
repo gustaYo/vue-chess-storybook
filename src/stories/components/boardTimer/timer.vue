@@ -5,67 +5,45 @@
 </template>
 
 <script>
-import timerCountDown from 'worker-loader!./timeWorker.js';
   export default {
     props: {
-
       time: {
         type: Number,
-        default: 70*1000
+        default: 1*60*1000
       },
       active: {
         type: Boolean,
         default: false
       },
       keyname: {
-        default: 'vue-chess'
+        default: 'timerBoard'
       },
       color: {
-        default: 'b'
+        default: 'w'
       },
       className: {
         default: 'flat-text-board-timer'
       }
     },
-    data () {
-      return {
-        timerWorker: new timerCountDown()
-      }
-    },
     methods: {
       changeTime (time) {
-        this.setTime(time)
         this.$store.commit('changeTime',{keyName: this.keyname,c: this.color, time: time})
-      },
-      start_() {
-        this.timerWorker.postMessage(JSON.stringify({fun: 'start'}));
-      },
-      stop_() {
-        this.timerWorker.postMessage(JSON.stringify({fun: 'stop'}));
-      },
-      setTime (time) {
-        var men = {
+        var pp = {
+          keyName: this.keyname,
           fun: 'setTime',
-          arg: time
+          arg: {
+            [this.color]: time
+          }
         }
-        this.timerWorker.postMessage(JSON.stringify(men));         
+        this.$store.commit('actionW',pp)        
       },
       initTime () {
-        this.$store.commit('initTime',{keyName: this.keyname,c: this.color, time: this.time})
-        this.timerWorker.addEventListener(
-          'message',
-          (e) => {
-            this.$store.commit('changeTime',{keyName: this.keyname,c: this.color, time: e.data})
-          }
-        )
-        this.setTime(this.time)
+        this.$store.dispatch('initTime',{keyName: this.keyname,c: this.color, time: this.time, active: this.active})
       }
-    },  
+    },
     created () {
       this.initTime()
-      if (this.active){
-        this.start_() 
-      }
+      // this.$store.commit('actionW',{keyName: this.keyname, fun: this.active ? 'start' : 'stop', arg: this.color})
     },
     filters: {
       boardTime (s) {
@@ -75,21 +53,17 @@ import timerCountDown from 'worker-loader!./timeWorker.js';
         return ('0' + min).slice(-2) + ':' + ('0' + segs).slice(-2)        
       }
     },
-    beforeDestroy () {
-      this.timerWorker.terminate()
-      this.timerWorker = null
-    },
     watch: {
       active (newVal, oldVal) {
         if(newVal){
-          this.start_()
+          this.$store.commit('actionW',{keyName: this.keyname,c: this.color, fun: 'start', arg: this.color})
         }else{
-          this.stop_()
+          this.$store.commit('actionW',{keyName: this.keyname,c: this.color, fun: 'stop', arg: this.color})
         }
       },
       time (newVal, oldVal) {
         this.changeTime(newVal)
       }
-    }    
+    }
   }
 </script>

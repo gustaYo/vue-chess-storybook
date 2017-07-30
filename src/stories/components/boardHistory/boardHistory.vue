@@ -1,12 +1,12 @@
 <template>
 
-  <div style="width: 360px">
+  <div style="width: 235px">
     <ul class="history-board" ref="containerMoves">
       <li @dblclick="initPosition(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
           <label v-if="index % 2 ===0">{{ (index/2)+1 }}.</label>
-          <img alt="" v-bind:src="urlPiece(move)" height="25" width="25">
-          <label>{{ move.from }}>{{ move.to }} {{ move.san }}</label>
+          <img alt="" v-bind:src="urlPiece(move)" height="15" width="15">
+          <label><!--{{ move.from }}>{{ move.to }}--> {{ move.san }}</label>
         </span>
       </li>
     </ul>
@@ -36,7 +36,10 @@ export default {
   name: 'BoardHistory',
   props: {
     history: {
-      type: Array
+      type: Array,
+      default: function () {
+        return []
+      }
     },
     active: {
       type: Boolean,
@@ -77,6 +80,10 @@ export default {
       return '/images/pieces/'+this.pieces+'/' + move.color + move.piece.toUpperCase() + '.svg'
     },
     moveToHistory (index) {
+      if (index < 0) {
+        this.sendEvent('init')
+        this.select = -1
+      };
       if (index < 0 || index > this.historyMove.length - 1) {
         clearInterval(playEvent)
         this.played = false
@@ -125,6 +132,9 @@ export default {
     history (newVal, oldVal) {
       if(this.historyMove.length<newVal.length){
         this.historyMove = newVal
+        setTimeout(()=>{
+          this.select = this.historyMove.length - 1
+        },300)        
       }else{
         if (this.backHistory) {
           this.historyMove = newVal
@@ -164,15 +174,12 @@ export default {
 .button-moves{
   padding: 1px;
 }
-
-ul.history-board li {
-    display: inline-block;
-    margin: 0 0px;
-}
-
 ul.history-board li{
+  display: inline-block;
+  margin: 0 0px;
   width: 50%;
   float: left;
+  text-align: left;
   list-style-type: none;
 }
 

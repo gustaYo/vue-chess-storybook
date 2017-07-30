@@ -27,20 +27,21 @@ export function otherColor(color) {
 export function getGameState(chess) {
   const in_check = chess.in_check()
   const gameOver = chess.game_over()
+  const turn = chess.turn()
   if (in_check && !gameOver){
     return {
-      color: otherColor(chess.turn()),
+      color: otherColor(turn),
       motiv: 'in_check'
     }
   }
-  return isGameOver(chess,gameOver)
+  return isGameOver(chess,gameOver,turn)
 }
 
-export function isGameOver(chess,gameOver) {  
+export function isGameOver(chess,gameOver,turn) {
   if (gameOver){
     if (chess.in_checkmate()) {
       return {
-        color: otherColor(chess.turn()),
+        color: otherColor(turn),
         motiv: 'checkmate'
       }
     }
@@ -52,13 +53,13 @@ export function isGameOver(chess,gameOver) {
     }
     if (chess.in_stalemate()) {
       return {
-        color: otherColor(chess.turn()),
+        color: otherColor(turn),
         motiv: 'stalemate'
       }
     }
     if (chess.in_checkmate()) {
       return {
-        color: otherColor(chess.turn()),
+        color: otherColor(turn),
         motiv: 'checkmate'
       }
     }
@@ -76,13 +77,15 @@ export function isGameOver(chess,gameOver) {
     }
   }else{
     return {
-      color: chess.turn()
+      color: turn,
+      motiv: false
     }
   }
 }
 
 export function changeBoardState(cg,chess,board,mode) {
   var move = {}
+  var pgn = ''
   if (board.move) {
     move = board.move
     chess.move({
@@ -93,6 +96,7 @@ export function changeBoardState(cg,chess,board,mode) {
     cg.move(move.from, move.to)    
   }else{
     if (board.pgn){
+      pgn = board.pgn
       chess.load_pgn(board.pgn)
     }else{
       if(board.fen){
@@ -115,9 +119,8 @@ export function changeBoardState(cg,chess,board,mode) {
       dests: toDests(chess)
     }
   })
-  var pgn = chess.pgn()
   return {
-    pgn: pgn,
+    pgn: pgn !==''?pgn:chess.pgn(),
     fen: fen
   }
 }
