@@ -22,7 +22,7 @@ var myMixin = {
       history: [],
       backHistory: false,
       active: true,
-      useStore: true
+      useStore: false
     }
   },
   methods: {

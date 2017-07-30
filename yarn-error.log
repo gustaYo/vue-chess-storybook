@@ -1,8 +1,8 @@
 Arguments: 
-  /home/gustayo/.nvm/versions/node/v7.10.0/bin/node /home/gustayo/.nvm/versions/node/v7.10.0/bin/yarn install
+  /home/gustayo/.nvm/versions/node/v7.10.0/bin/node /home/gustayo/.nvm/versions/node/v7.10.0/bin/yarn add boostrap --ofline
 
 PATH: 
-  /home/gustayo/.nvm/versions/node/v7.10.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+  /home/gustayo/.nvm/versions/node/v7.10.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 
 Yarn version: 
   0.24.5
@@ -51,8 +51,10 @@ npm manifest:
       "jquery": "^3.2.1",
       "object-assign": "^4.1.1",
       "vue": "^2.0.0",
+      "vue-clock": "^0.3.1",
       "vue-waypoint": "^2.4.0",
       "vue-worker": "^1.2.1",
+      "vue2-countdown": "^1.0.8",
       "vuex": "^2.0.0"
     },
     "scripts": {
@@ -70,5 +72,7 @@ Lockfile:
   No lockfile
 
 Trace: 
-  Error: https://registry.yarnpkg.com/webpack/-/webpack-2.7.0.tgz: unexpected end of file
-      at Zlib._handle.onerror (zlib.js:355:17)
+  Error: getaddrinfo EAI_AGAIN nexus.prod.uci.cu:80
+      at Object.exports._errnoException (util.js:1050:11)
+      at errnoException (dns.js:33:15)
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:73:26)

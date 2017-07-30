@@ -148,7 +148,6 @@ export default {
     },
     select (newVal, oldVal) {
       var divScroll = this.$refs.containerMoves
-      //var atBottom = divScroll.scrollTop >= divScroll.scrollHeight - divScroll.clientHeight
       var el = this.$refs['item'+newVal]
       var position = Jquery(el).position();
       var top = 0

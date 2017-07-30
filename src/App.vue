@@ -3,7 +3,7 @@
     {{ $store.state.board[idBoard]}}
     <div class="container">
       <div class="boardChess">
-        <board 
+        <board
         :key-name="idBoard"
         :use-store="useStore" 
         @update:history="onHistoryChange"
@@ -43,9 +43,11 @@
   :back-history="backHistory"
   >
 </board-history>
+
+<button @click="active=false">Surrender</button>
 </div>
 </div>
-<button @click="active=false">Desactive</button>
+
 </div>
 </template>
 
@@ -64,9 +66,9 @@
       return {
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',
-        mode: {'white':true,'black':true},        
+        mode: {'white':false,'black':true},        
         pgn:'',
-        vsIa: {isVsIA: false, color: 'w', delay: 10, mode: 'worker'},
+        vsIa: {isVsIA: true, color: 'w', delay: 10, mode: 'worker'},
         history: [],
         active: true,
         backHistory: true,

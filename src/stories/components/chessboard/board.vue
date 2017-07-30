@@ -127,20 +127,20 @@ var stylesBoard = {
         if (this.useStore) {
           var history = this.chess.history()
           var post = history.length-1
-          var time = 0
           if (post>=0) {
-            time = this.timesHistory[post]    
-          }
-          var pp = {
-            keyName: this.keyName,
-            fun: 'setTime',
-            arg: {
-              [this.chess.turn()]: time
-            }
-          }
-          this.$store.commit('actionW',pp)
+            if (history.length % 2 === 0) {
+              this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post] || 0})
+              if (this.timesHistory[post-1]) {
+                this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post-1] || 0})
+              };
+            }else{
+              this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post] || 0})
+              if (this.timesHistory[post+1]) {
+                this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post+1] || 0})
+              };
+            }                       
+          }          
         }
-
       },
       registerTimeMove (lengthHistory) {
         if (this.useStore) {
@@ -148,8 +148,13 @@ var stylesBoard = {
             var times = this.timesHistory.slice(0,lengthHistory)
             this.timesHistory = times
           }else{
-            var time = this.$store.state.board[this.keyName].times[this.chess.turn()]
-            this.timesHistory.push(time)
+            var turn = this.chess.turn()
+
+            if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
+                var time = this.$store.state.board[this.keyName].times[turn]
+                this.timesHistory.push(time)              
+            };
+            
           }          
         }        
       },
