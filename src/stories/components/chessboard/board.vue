@@ -2,32 +2,32 @@
   <div class="chessground-component" >
     <section v-bind:class="[stylesBoard['board'][currentStyle['board']],stylesBoard['pieces'][currentStyle['pieces']]]">
       <div
-          ref="sboard"
-          class="cg-board-wrap"
-          v-bind:style="[dimentions]"
-       >
-       </div>
-    </section>
-  </div>
+      ref="sboard"
+      class="cg-board-wrap"
+      v-bind:style="[dimentions]"
+      >
+    </div>
+  </section>
+</div>
 </template>
 
 <script>
 
-import {Chessground}  from 'chessground';
-import MyChess from 'chess.js'
-import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
-import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
+  import {Chessground}  from 'chessground';
+  import MyChess from 'chess.js'
+  import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
+  import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
 
-import './assets/css/boardSkin.css'
-import './assets/css/chessground.css'
-import './assets/css/pieces.css'
+  import './assets/css/boardSkin.css'
+  import './assets/css/chessground.css'
+  import './assets/css/pieces.css'
 
-var stylesBoard = {
-  board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
-  pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton','picture']
-}
+  var stylesBoard = {
+    board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
+    pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton','picture']
+  }
   export default {
-      props: {
+    props: {
       vsIa:{
         type: Object,
         default: () => {
@@ -151,8 +151,8 @@ var stylesBoard = {
             var turn = this.chess.turn()
 
             if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
-                var time = this.$store.state.board[this.keyName].times[turn]
-                this.timesHistory.push(time)              
+              var time = this.$store.state.board[this.keyName].times[turn]
+              this.timesHistory.push(time)              
             };
             
           }          

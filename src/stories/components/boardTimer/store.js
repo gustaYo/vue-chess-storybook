@@ -49,7 +49,7 @@ export const store = new Vuex.Store({
             var data = JSON.parse(e.data)
             commit('changeTime',{keyName: indexName,c: data.c, time: data.time})
           }
-        )
+          )
         timeWorkersStore[indexName] = worker
         var pp = {
           keyName: indexName,
