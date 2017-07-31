@@ -11,12 +11,19 @@ export function toDests(chess) {
 
 export function toColor(chess,mode) {
   const color = (chess.turn() === 'w') ? 'white' : 'black';
-  if (mode){
-    if(!mode[color]){
+  if (mode) {
+    if (mode[color]) {
+      return color
+    }
+    var otherC = color === 'white' ? 'black' : 'white';
+    if (mode[otherC]) {
+      return otherC
+    }
+    if (!mode[color] && !mode[otherC]) {
       return 'undefined'
     }
   }
-  return color
+  return color  
 }
 
 
@@ -111,7 +118,17 @@ export function changeBoardState(cg,chess,board,mode) {
     }
   }  
   var fen = chess.fen()
+  var history = chess.history({ verbose: true })
   cg.set({
+    premovable:{
+      enabled:true,
+      showDests: true,
+      castle: true,
+      current: history[history.length-1] && [history[history.length-1].from,history[history.length-1].to] || []
+    },
+    predroppable:{
+      enabled: true
+    },
     fen: fen,
     turnColor: toColor(chess),
     movable: {
@@ -121,7 +138,8 @@ export function changeBoardState(cg,chess,board,mode) {
   })
   return {
     pgn: pgn !==''?pgn:chess.pgn(),
-    fen: fen
+    fen: fen,
+    history: history
   }
 }
 

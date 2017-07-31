@@ -166,7 +166,7 @@
           this.$emit('move', board)
           this.$emit('update:fen', state.fen)
           //this.$emit('update:pgn', state.pgn)
-          var history = this.chess.history({ verbose: true })
+          var history = state.history
           var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
           if (fenINit !==state.fen) {
             this.registerTimeMove(history.length)
@@ -222,20 +222,19 @@
     mounted () {
       this.chess = new MyChess();
       this.ground = Chessground(this.$refs.sboard, {
-        movable: {
-          premove: true,
-          color: toColor(this.chess),
+        predroppable:{
+          enabled: true
+        },
+        movable: {          
           free: false,
-          dests: toDests(this.chess)
+          dests: toDests(this.chess),
+          events: { after: this.onMove }
         },
         orientation: this.orientation,
         viewOnly: false,
         animation: {
           duration: 300
         },        
-      });
-      this.ground.set({
-        movable: { events: { after: this.onMove } }
       });
       this.move({fen:this.fen})
       if(this.pgn !=''){

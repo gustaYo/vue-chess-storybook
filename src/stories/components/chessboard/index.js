@@ -68,17 +68,17 @@ storiesOf('Chessground', module)
 }))
 .add('random IA white VS human black', () => ({
   render(h) {
-    return h(Board, { props: { orientation:'black', vsIa: {isVsIA: true, color: 'w', delay: 1000, mode: 'random'} } });
+    return h(Board, { props: { orientation:'black', vsIa: {isVsIA: true, color: 'w', delay: 1000, mode: 'random'} ,mode: {'white':false,'black':true} } });
   },
 }))
 .add('human white VS random IA black', () => ({
   render(h) {
-    return h(Board, { props: { vsIa: {isVsIA: true, color: 'b', delay: 1000, mode: 'random'} } });
+    return h(Board, { props: { vsIa: {isVsIA: true, color: 'b', delay: 2000, mode: 'random'},mode: {'white':true,'black':false} } });
   },
 }))
 .add('random IA white VS random IA black', () => ({
   render(h) {
-    return h(Board, { props: { vsIa: {isVsIA: true, color: 'all', delay: 1000, mode: 'random'} } });
+    return h(Board, { props: { vsIa: {isVsIA: true, color: 'all', delay: 1000, mode: 'random'},mode: {'white':false,'black':false} } });
   },
 }))
 .add('Garbochess worker IA  white VS human black', () => ({

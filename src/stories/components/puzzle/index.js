@@ -81,4 +81,4 @@ storiesOf('Puzzle', module)
         }
       });
   },
-})) 
+}))
