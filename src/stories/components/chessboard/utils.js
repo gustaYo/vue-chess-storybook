@@ -128,7 +128,7 @@ export function changeBoardState(cg,chess,board,mode) {
       castle: true,
       current: lastMove
     },
-    //lastMove:lastMove,
+    lastMove:lastMove,
     predroppable:{
       enabled: true
     },    

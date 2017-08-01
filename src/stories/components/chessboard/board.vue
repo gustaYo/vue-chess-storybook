@@ -120,10 +120,10 @@
          this.currentIndex --
         }
         if(this.currentIndex <0){
-          this.currentIndex = 0
+          this.currentIndex = -1
         }
-        if (this.currentIndex > this.globalHistory.length) {
-          this.currentIndex = this.globalHistory.length
+        if (this.currentIndex > this.globalHistory.length-1) {
+          this.currentIndex = this.globalHistory.length-1
         }
         this.$emit('moveIndex',this.currentIndex)
       },
@@ -149,7 +149,7 @@
       },
       getTimeRegisterInGame () {
         if (this.useStore) {
-          var history = this.history
+          var history = this.chess.history()
           var post = history.length-1
           if (post>=0) {
             if (history.length % 2 === 0) {
@@ -190,20 +190,20 @@
           this.$emit('move', board)
           this.$emit('update:fen', state.fen)
           //this.$emit('update:pgn', state.pgn)
-          var history = state.history          
+          var history = state.history
           var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
           if (fenINit !==state.fen) {
             this.registerTimeMove(history.length)
           }else{
             this.timesHistory = []
           }
-          this.history = history          
+          this.history = history
           var board = {
             fen: state.fen,
             pgn: state.pgn
           }
           this.updateBoardState(board)
-        }else{          
+        }else{
           var state= changeBoardState(this.ground,this.chess,board, this.mode)
           if (this.history.length === 0) {
             this.history = state.history
@@ -226,7 +226,7 @@
       updateBoardState(state){
         if (this.useStore) {
           this.$store.commit('updateStateBoard',{[this.keyName]:state})
-        };        
+        };
       }
     },
     created () {

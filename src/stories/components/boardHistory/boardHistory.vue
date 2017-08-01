@@ -2,7 +2,7 @@
 
   <div style="width: 235px">
     <ul class="history-board" ref="containerMoves">
-      <li @dblclick="initPosition(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
+      <li @dblclick="loadInitState(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
           <label v-if="index % 2 ===0">{{ (index/2)+1 }}.</label>
           <img alt="" v-bind:src="urlPiece(move)" height="15" width="15">
@@ -21,6 +21,7 @@
       >>
     </button>
     <label class="col s1 m1 l1">{{velo}}</label>
+
     <input v-model="velo" type=range min=0 max=5 step=1 class="col s4 m4 l4">         
   </div>
 </div>
@@ -74,10 +75,10 @@ export default {
     }
   },
   methods: {
-    initPosition(index){
-      if(index===0){
-        this.sendEvent('init')
-      }
+    loadInitState(index){
+      if (index===0) {
+        this.moveToHistory(-1)
+      };
     },
     urlPiece (move) {
       return '/images/pieces/'+this.pieces+'/' + move.color + move.piece.toUpperCase() + '.svg'
@@ -140,7 +141,7 @@ export default {
       if(this.historyMove.length<newVal.length){
         this.historyMove = newVal
         setTimeout(()=>{
-          this.select = this.historyMove.length - 1
+          this.select = this.historyMove.length-1
         },300)        
       }else{
         if (this.backHistory) {
@@ -170,7 +171,7 @@ export default {
             'scrollTop': top
           }, 'slow')
         }
-      }    
+      }
     }    
   }
 }

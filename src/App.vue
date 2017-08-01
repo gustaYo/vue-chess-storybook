@@ -15,6 +15,7 @@
         v-on:move="onMove"
         v-on:endGame="endGame"
         orientation='black'
+        v-on:moveIndex="modeToIndex"
         >
       </board>
     </div>
@@ -37,6 +38,7 @@
       >
     </timer>
   <board-history 
+  :index-move="indexHistory"
   :history="history"
   v-on:move="historyIndex"
   :active="active"
@@ -56,6 +58,7 @@
   import BoardHistory from './stories/components/boardHistory/boardHistory.vue'
   import timer from './stories/components/boardTimer/timer.vue'
   import {store} from './stories/components/boardTimer/store'
+  
 
   var pgn = '1. e4 e5 2. Nf3 Nc6 3. Ng5 b5 4. d4 d5 5. Bxb5 dxe4 6. Bxc6+ Ke7 7. Bxa8 Bb7 8. Bxb7 Qd6 9. Bxe4 f5 10. Bxf5 Kf6 11. Ne4+ Ke7 12. Nxd6 Kxd6 13. f4 c5 14. dxe5+ Kc7 15. Qd7+'
 
@@ -73,10 +76,14 @@
         active: true,
         backHistory: true,
         useStore: true,
-        state:{color:'w', motiv: false}
+        state:{color:'w', motiv: false},
+        indexHistory: -1
       }
     },
     methods: {
+      modeToIndex(index){
+        this.indexHistory = index
+      },
       endGame () {
         this.active = false
       },

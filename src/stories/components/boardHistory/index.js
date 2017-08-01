@@ -97,17 +97,6 @@ storiesOf('BoardHistory', module)
   mixins: [myMixin]
 }))
 
-.add('Visor read only scroll event fire', () => ({
-  components: { BoardHistory, Board },
-  template: '<div><div style="float:left; padding: 10px;"><board :use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex"></board-history></div></div>',
-  data () {
-    return {
-      mode: {'white':false,'black':false}
-    }
-  },
-  mixins: [myMixin]
-}))
-
 .add('Visor user white VS PC IA worker', () => ({
   components: { BoardHistory, Board },
   template: '<div><br/><div style="float:left; padding: 10px;"><board :use-store="useStore"  @update:history="onHistoryChange" :vs-ia="vsIa" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex" :active="active" :back-history="backHistory"></board-history></div></div>',
