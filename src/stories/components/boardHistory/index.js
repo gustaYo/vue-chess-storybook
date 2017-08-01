@@ -7,7 +7,10 @@ import MyChess from 'chess.js'
 import BoardHistory from './boardHistory.vue';
 import Board from '../chessboard/board.vue';
 
+
+
 import {store} from '../boardTimer/store'
+
 
 Vue.component('board-history', BoardHistory)
 
@@ -22,10 +25,14 @@ var myMixin = {
       history: [],
       backHistory: false,
       active: true,
-      useStore: false
+      useStore: false,
+      indexHistory: -1
     }
   },
   methods: {
+    modeToIndex(index){
+      this.indexHistory = index
+    },
     onHistoryChange(history) {
       this.history = history
     },
@@ -80,6 +87,17 @@ storiesOf('BoardHistory', module)
 }))
 
 .add('Visor read only', () => ({
+  components: { BoardHistory, Board },
+  template: '<div><div style="float:left; padding: 10px;"><board :active="false" v-on:moveIndex="modeToIndex" :use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :index-move="indexHistory" :history="history" v-on:move="historyIndex"></board-history></div></div>',
+  data () {
+    return {
+      mode: {'white':false,'black':false}
+    }
+  },
+  mixins: [myMixin]
+}))
+
+.add('Visor read only scroll event fire', () => ({
   components: { BoardHistory, Board },
   template: '<div><div style="float:left; padding: 10px;"><board :use-store="useStore" @update:history="onHistoryChange" :mode="mode" :pgn="pgn" v-on:move="onMove"></board></div><div style="float:left"><board-history :history="history" v-on:move="historyIndex"></board-history></div></div>',
   data () {

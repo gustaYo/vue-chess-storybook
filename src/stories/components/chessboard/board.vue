@@ -1,5 +1,6 @@
 <template>
-  <div class="chessground-component" >
+  <div class="chessground-component">
+  <scroll-direction v-on:scrolld="eventScrollDirection">
     <section v-bind:class="[stylesBoard['board'][currentStyle['board']],stylesBoard['pieces'][currentStyle['pieces']]]">
       <div
       ref="sboard"
@@ -8,6 +9,7 @@
       >
     </div>
   </section>
+  </scroll-direction>
 </div>
 </template>
 
@@ -17,6 +19,7 @@
   import MyChess from 'chess.js'
   import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
   import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
+  import ScrollDirection from '../scrollStaticDirection/scrollDirection.vue'
 
   import './assets/css/boardSkin.css'
   import './assets/css/chessground.css'
@@ -94,15 +97,36 @@
     data () {
       return {
         chess: {},
-        ground: 0,   
+        ground: 0,
         stylesBoard: stylesBoard,
         stateGame: {},
         loopTime: true,
         garbochessWorker: {},
-        timesHistory: []
+        timesHistory: [],
+        currentIndex: 0,
+        history: [],
+        globalHistory: []
       }
     },
+    components:{
+      ScrollDirection
+    },
     methods: {
+      eventScrollDirection (dir) {
+        if (dir === 'up') {
+         this.currentIndex ++
+        }
+        if (dir === 'down') {
+         this.currentIndex --
+        }
+        if(this.currentIndex <0){
+          this.currentIndex = 0
+        }
+        if (this.currentIndex > this.globalHistory.length) {
+          this.currentIndex = this.globalHistory.length
+        }
+        this.$emit('moveIndex',this.currentIndex)
+      },
       changeOrientation () {
         this.orientation = this.orientation === 'white' ? 'black' : 'white'
         this.ground.set({
@@ -125,7 +149,7 @@
       },
       getTimeRegisterInGame () {
         if (this.useStore) {
-          var history = this.chess.history()
+          var history = this.history
           var post = history.length-1
           if (post>=0) {
             if (history.length % 2 === 0) {
@@ -152,7 +176,7 @@
 
             if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
               var time = this.$store.state.board[this.keyName].times[turn]
-              this.timesHistory.push(time)              
+              this.timesHistory.push(time)
             };
             
           }          
@@ -166,21 +190,24 @@
           this.$emit('move', board)
           this.$emit('update:fen', state.fen)
           //this.$emit('update:pgn', state.pgn)
-          var history = state.history
+          var history = state.history          
           var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
           if (fenINit !==state.fen) {
             this.registerTimeMove(history.length)
           }else{
             this.timesHistory = []
-          }          
-          this.$emit('update:history', history)
+          }
+          this.history = history          
           var board = {
             fen: state.fen,
             pgn: state.pgn
           }
           this.updateBoardState(board)
-        }else{
-          changeBoardState(this.ground,this.chess,board, this.mode)
+        }else{          
+          var state= changeBoardState(this.ground,this.chess,board, this.mode)
+          if (this.history.length === 0) {
+            this.history = state.history
+          }
           this.getTimeRegisterInGame()
         }
       },
@@ -259,6 +286,15 @@
         if(!val){
           this.endGame()
         }
+      },
+      history( val, oldVal){
+        if (this.globalHistory.length === 0 && val.length > this.globalHistory.length) {
+          this.globalHistory = val
+        }
+        if (this.active) {
+          this.globalHistory = val
+        }
+        this.$emit('update:history', val)
       },
       externalMove (val, oldVal) {
         this.onMove(val.from, val.to)

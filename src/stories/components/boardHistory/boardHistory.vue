@@ -51,6 +51,9 @@ export default {
       required: false,
       default: false
     },
+    indexMove: {
+      default: -1
+    },
     handleMove: {
       type: Function,
       required: false,
@@ -65,7 +68,7 @@ export default {
   data () {
     return {
       velo: 2,
-      select: -1,
+      select: this.indexMove,
       played: false,
       historyMove: []
     }
@@ -129,6 +132,10 @@ export default {
     }
   },  
   watch: {
+    indexMove(newVal, oldVal) {
+      this.select = newVal
+      this.moveToHistory(newVal)
+    },
     history (newVal, oldVal) {
       if(this.historyMove.length<newVal.length){
         this.historyMove = newVal
@@ -147,7 +154,7 @@ export default {
       this.play()
     },
     select (newVal, oldVal) {
-      if (newVal>0) {
+      if (newVal>0 && newVal<this.history.length) {
         var divScroll = this.$refs.containerMoves
         var el = this.$refs['item'+newVal]
         var position = Jquery(el).position();
