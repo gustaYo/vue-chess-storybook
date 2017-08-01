@@ -100,7 +100,7 @@ export function changeBoardState(cg,chess,board,mode) {
       to: move.to,
       promotion: 'q'
     })
-    cg.move(move.from, move.to)    
+    cg.move(move.from, move.to)
   }else{
     if (board.pgn){
       pgn = board.pgn
@@ -116,26 +116,32 @@ export function changeBoardState(cg,chess,board,mode) {
         }
       }
     }
-  }  
-  var fen = chess.fen()
-  var history = chess.history({ verbose: true })
+  }
+  const fen = chess.fen()
+  const history = chess.history({ verbose: true })
+  const lastMove = history.length-1>=0 && history[history.length-1] && [history[history.length-1].from,history[history.length-1].to] || []
+  const  shapeSet1 = lastMove[0] && lastMove[1] && [{ orig: lastMove[0] || '', dest: lastMove[1] || '', brush: 'green' }] || []  
   cg.set({
     premovable:{
       enabled:true,
       showDests: true,
       castle: true,
-      current: history[history.length-1] && [history[history.length-1].from,history[history.length-1].to] || []
+      current: lastMove
     },
+    //lastMove:lastMove,
     predroppable:{
       enabled: true
-    },
+    },    
     fen: fen,
+    drawable: { shapes: shapeSet1 },
     turnColor: toColor(chess),
     movable: {
       color: toColor(chess,mode),
       dests: toDests(chess)
     }
   })
+  { drawable: { shapes: shapeSet1 } }
+  cg.setShapes(shapeSet1);
   return {
     pgn: pgn !==''?pgn:chess.pgn(),
     fen: fen,

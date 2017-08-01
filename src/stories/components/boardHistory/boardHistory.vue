@@ -147,20 +147,22 @@ export default {
       this.play()
     },
     select (newVal, oldVal) {
-      var divScroll = this.$refs.containerMoves
-      var el = this.$refs['item'+newVal]
-      var position = Jquery(el).position();
-      var top = 0
-      if (divScroll.clientHeight <= position.top + 10) {
-        top = divScroll.scrollTop + divScroll.clientHeight/2
-      }
-      if (position.top-10<0) {
-        top = divScroll.scrollTop - divScroll.clientHeight/2        
-      }
-      if(top!==0){
-        Jquery(divScroll).stop(0,0).animate({
-          'scrollTop': top
-        }, 'slow')
+      if (newVal>0) {
+        var divScroll = this.$refs.containerMoves
+        var el = this.$refs['item'+newVal]
+        var position = Jquery(el).position();
+        var top = 0
+        if (divScroll.clientHeight <= position.top + 10) {
+          top = divScroll.scrollTop + divScroll.clientHeight/2
+        }
+        if (position.top-10<0) {
+          top = divScroll.scrollTop - divScroll.clientHeight/2        
+        }
+        if(top!==0){
+          Jquery(divScroll).stop(0,0).animate({
+            'scrollTop': top
+          }, 'slow')
+        }
       }    
     }    
   }
