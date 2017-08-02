@@ -37,6 +37,13 @@
           return {isVsIA: false, color: 'w', delay: 1000, mode: 'random'}
         }
       },
+      stylesBoard:{
+        type: Object,
+        default: () => {
+          return { board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
+          pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','picture']}
+        }
+      },
       keyName: {
         default: 'someId'
       },
@@ -98,7 +105,6 @@
       return {
         chess: {},
         ground: 0,
-        stylesBoard: stylesBoard,
         stateGame: {},
         loopTime: true,
         garbochessWorker: {},
@@ -269,6 +275,9 @@
       }
     },
     watch: {
+      orientation (val, oldVal) {
+        this.ground.set({orientation: val})
+      },
       fen (val, oldVal) {
         this.move({fen:val})
       },

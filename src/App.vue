@@ -16,6 +16,8 @@
         v-on:endGame="endGame"
         orientation='black'
         v-on:moveIndex="modeToIndex"
+        :orientation="orientation"
+        :current-style="styleB"
         >
       </board>
     </div>
@@ -43,10 +45,16 @@
   v-on:move="historyIndex"
   :active="active"
   :back-history="backHistory"
+
   >
 </board-history>
 
 <button @click="active=false">Surrender</button>
+
+<button @click="orientation=orientation==='white'?'black':'white'">Invert to {{orientation}}</button>
+
+<button @click="changeStyleBoard('board')">Change board</button>
+<button @click="changeStyleBoard('pieces')">Change peices</button>
 </div>
 </div>
 
@@ -62,11 +70,20 @@
 
   var pgn = '1. e4 e5 2. Nf3 Nc6 3. Ng5 b5 4. d4 d5 5. Bxb5 dxe4 6. Bxc6+ Ke7 7. Bxa8 Bb7 8. Bxb7 Qd6 9. Bxe4 f5 10. Bxf5 Kf6 11. Ne4+ Ke7 12. Nxd6 Kxd6 13. f4 c5 14. dxe5+ Kc7 15. Qd7+'
 
+  var stylesBoard = {
+    board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
+    pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','picture']
+  }
+
   export default {
     name: 'app',
     store,
     data () {
       return {
+        styleB: {
+            board: 1,
+            pieces: 0
+        },
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',
         mode: {'white':false,'black':true},        
@@ -77,14 +94,18 @@
         backHistory: true,
         useStore: true,
         state:{color:'w', motiv: false},
-        indexHistory: -1
+        indexHistory: -1,
+        orientation: 'black'
       }
     },
     methods: {
+      changeStyleBoard (type) {
+        this.styleB[type] = this.styleB[type] + 1 > stylesBoard[type].length - 1 ? 0 : this.styleB[type] + 1
+      },
       modeToIndex(index){
         this.indexHistory = index
       },
-      endGame () {
+      endGame () {        
         this.active = false
       },
       onHistoryChange(history) {
@@ -122,29 +143,4 @@
     float: left;
   }
 
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
-  cent
-  h1, h2 {
-    font-weight: normal;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  a {
-    color: #42b983;
-  }
 </style>
