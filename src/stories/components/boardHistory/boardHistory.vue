@@ -1,6 +1,6 @@
 <template>
 
-  <div style="width: 235px">
+  <div class="section-history">
     <ul class="history-board" ref="containerMoves">
       <li @dblclick="loadInitState(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
@@ -23,7 +23,7 @@
     </button>
     <label class="col s1 m1 l1">{{velo}}</label>
 
-    <input v-model="velo" type=range min=0 max=5 step=1 class="col s4 m4 l4">         
+    <input v-model="velo" type=range min=0.5 max=3 step=0.5 class="col s4 m4 l4">         
   </div>
 </div>
 
@@ -125,7 +125,7 @@ export default {
       if (this.played) {
         playEvent = setInterval( () =>{
           this.moveToHistory(this.select + 1)
-        }, parseInt(this.velo) * 1000)
+        }, parseInt(this.velo) * 1000 )
       } else {
         clearInterval(playEvent)
       }
@@ -159,7 +159,7 @@ export default {
       this.play()
     },
     select (newVal, oldVal) {
-      if (newVal>0 && newVal<this.history.length) {
+      if (newVal>0 && newVal<this.history.length-1) {
         var divScroll = this.$refs.containerMoves
         var el = this.$refs['item'+newVal]
         var position = Jquery(el).position();
@@ -214,5 +214,11 @@ ul.history-board li:hover{
  .item-select {
     background-color: #5f6b44;;
   }
+
+.section-history{
+  float: left;
+  padding-left: 15px;
+  width: 235px;
+}
 
 </style>

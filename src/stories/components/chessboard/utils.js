@@ -1,5 +1,7 @@
 
 
+import { Howl } from 'howler'
+
 export function toDests(chess) {
   const dests = {};
   chess.SQUARES.forEach(s => {
@@ -7,6 +9,13 @@ export function toDests(chess) {
     if (ms.length) dests[s] = ms.map(m => m.to);
   });
   return dests;
+}
+
+export function soundBoard(type) {
+  var sound = new Howl({
+    src: ['sound/'+type+'.mp3']
+  });
+  sound.play();
 }
 
 export function toColor(chess,mode) {

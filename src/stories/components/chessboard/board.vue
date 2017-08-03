@@ -1,17 +1,24 @@
 <template>
   <div class="chessground-component">
-  <scroll-direction v-on:scrolld="eventScrollDirection"
-   
-    <section v-bind:class="'merida'">
-      <div
-      ref="sboard"
-      class="cg-board-wrap"
-      v-bind:style="[dimentions,backgroundBoard]"
-      >
-    </div>
-  </section>
-  </scroll-direction>
- 
+    <div style="float:left">
+      <scroll-direction v-on:scrolld="eventScrollDirection">
+        <div 
+        ref="sboard"
+        class="cg-board-wrap"
+        v-bind:style="[dimentions,backgroundBoard]"
+        >
+      </div>
+    </scroll-direction>
+  </div>
+    <board-history 
+    v-if="showHistory"
+    :index-move="currentIndex"
+    :history="history"
+    v-on:move="this.move"
+    :active="active"
+    :back-history="true"
+    >
+  </board-history>
 </div>
 </template>
 
@@ -20,8 +27,9 @@
   import {Chessground}  from 'chessground';
   import MyChess from 'chess.js'
   import GarbochessWorker from 'worker-loader!./assets/js/garbochess';
-  import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
+  import { toColor, toDests, aiPlay, changeBoardState, getGameState,soundBoard } from './utils'
   import ScrollDirection from '../scrollStaticDirection/scrollDirection.vue'
+  import BoardHistory from '../boardHistory/boardHistory.vue'
 
   import jQuery from 'jquery'
   import './assets/css/styleBoard.css'
@@ -60,6 +68,10 @@
           return {width: '420px', height: '420px'}
         }
       },
+      showHistory: {
+        type: Boolean,
+        default: false
+      },       
       useStore: {
         type: Boolean,
         default: false
@@ -68,6 +80,10 @@
         type: Boolean,
         default: true
       },
+      sound: {
+        type: Boolean,
+        default: true
+      },      
       fen: {
         default: ''
       },
@@ -108,102 +124,108 @@
       }
     },
     components:{
-      ScrollDirection
+      ScrollDirection,
+      BoardHistory
     },
     methods: {
       eventScrollDirection (dir) {
         if (dir === 'up') {
          this.currentIndex ++
-        }
-        if (dir === 'down') {
+       }
+       if (dir === 'down') {
          this.currentIndex --
-        }
-        if(this.currentIndex <0){
-          this.currentIndex = -1
-        }
-        if (this.currentIndex > this.globalHistory.length-1) {
-          this.currentIndex = this.globalHistory.length-1
-        }
-        this.$emit('moveIndex',this.currentIndex)
-      },
-      changeOrientation () {
-        this.orientation = this.orientation === 'white' ? 'black' : 'white'
-        this.ground.set({
-          orientation: this.orientation
-        })
-      },
-      runVsIA () {
-        if(this.isIAColorTurn()){
-          setTimeout(() => {
-            aiPlay(this.chess,this.vsIa.mode, this.garbochessWorker).then((move) => {
-              if (this.isIAColorTurn()) {
-                this.move({move: move})
-              }                
-            })
-          }, this.vsIa.delay)
-        }
-      },
-      changePieceStyle(){
-        var urlPieces = 'images/pieces/'+this.piecesBoard
-        var pieces = [{name:'pawn',key:'P'},{name:'bishop',key:'B'},{name:'knight',key:'N'},{name:'rook',key:'R'},{name:'queen',key:'Q'},{name:'king',key:'K'}]
-        var colors = [{name:'white',key:'w'},{name:'black',key:'b'}]
-        var loadColor = (color) =>{
-          pieces.map(({name,key},index)=>{
-            var url = urlPieces+'/'+color.key+key+'.svg'
-            jQuery('.cg-board piece.'+name+'.'+color.name).css({
-              'background-image': "url("+url+")"
-            })
+       }
+       if(this.currentIndex <0){
+        this.currentIndex = -1
+      }
+      if (this.currentIndex > this.globalHistory.length-1) {
+        this.currentIndex = this.globalHistory.length-1
+      }
+      this.$emit('moveIndex',this.currentIndex)
+    },
+    changeOrientation () {
+      this.orientation = this.orientation === 'white' ? 'black' : 'white'
+      this.ground.set({
+        orientation: this.orientation
+      })
+    },
+    runVsIA () {
+      if(this.isIAColorTurn()){
+        setTimeout(() => {
+          aiPlay(this.chess,this.vsIa.mode, this.garbochessWorker).then((move) => {
+            if (this.isIAColorTurn()) {
+              this.move({move: move})
+            }                
           })
-        }
-        colors.map((color,index)=>{
-          loadColor(color)
-        })        
-      },
-      isIAColorTurn(){
-        return this.loopTime && this.vsIa.isVsIA && (this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'
-      },
-      getTimeRegisterInGame () {
-        if (this.useStore) {
-          var history = this.chess.history()
-          var post = history.length-1
-          if (post>=0) {
-            if (history.length % 2 === 0) {
-              this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post] || 0})
-              if (this.timesHistory[post-1]) {
-                this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post-1] || 0})
-              };
-            }else{
-              this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post] || 0})
-              if (this.timesHistory[post+1]) {
-                this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post+1] || 0})
-              };
-            }                       
-          }          
-        }
-      },
-      registerTimeMove (lengthHistory) {
-        if (this.useStore) {
-          if (this.timesHistory.length > lengthHistory) {
-            var times = this.timesHistory.slice(0,lengthHistory)
-            this.timesHistory = times
-          }else{
-            var turn = this.chess.turn()
-
-            if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
-              var time = this.$store.state.board[this.keyName].times[turn]
-              this.timesHistory.push(time)
+        }, this.vsIa.delay)
+      }
+    },
+    changePieceStyle(){
+      var urlPieces = 'images/pieces/'+this.piecesBoard
+      var pieces = [{name:'pawn',key:'P'},{name:'bishop',key:'B'},{name:'knight',key:'N'},{name:'rook',key:'R'},{name:'queen',key:'Q'},{name:'king',key:'K'}]
+      var colors = [{name:'white',key:'w'},{name:'black',key:'b'}]
+      var loadColor = (color) =>{
+        pieces.map(({name,key},index)=>{
+          var url = urlPieces+'/'+color.key+key+'.svg'
+          jQuery('.cg-board piece.'+name+'.'+color.name).css({
+            'background-image': "url("+url+")"
+          })
+        })
+      }
+      colors.map((color,index)=>{
+        loadColor(color)
+      })        
+    },
+    isIAColorTurn(){
+      return this.loopTime && this.vsIa.isVsIA && (this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'
+    },
+    getTimeRegisterInGame () {
+      if (this.useStore) {
+        var history = this.chess.history()
+        var post = history.length-1
+        if (post>=0) {
+          if (history.length % 2 === 0) {
+            this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post] || 0})
+            if (this.timesHistory[post-1]) {
+              this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post-1] || 0})
             };
-            
-          }          
-        }        
-      },
-      move (board) {
-        if (this.active){
-          var state= changeBoardState(this.ground,this.chess,board, this.mode)
-          this.stateGame = getGameState(this.chess)
-          this.runVsIA()
-          this.$emit('move', board)
-          this.$emit('update:fen', state.fen)
+          }else{
+            this.$store.commit('changeTime',{keyName:this.keyName, c: 'b', time: this.timesHistory[post] || 0})
+            if (this.timesHistory[post+1]) {
+              this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post+1] || 0})
+            };
+          }                       
+        }          
+      }
+    },
+    registerTimeMove (lengthHistory) {
+      if (this.useStore) {
+        if (this.timesHistory.length > lengthHistory) {
+          var times = this.timesHistory.slice(0,lengthHistory)
+          this.timesHistory = times
+        }else{
+          var turn = this.chess.turn()
+
+          if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
+            var time = this.$store.state.board[this.keyName].times[turn]
+            this.timesHistory.push(time)
+          };
+
+        }          
+      }        
+    },
+    playSound(type){
+      if (this.sound) {
+        soundBoard(type)
+      }
+    },
+    move (board) {
+      if (this.active){
+        var state= changeBoardState(this.ground,this.chess,board, this.mode)
+        this.stateGame = getGameState(this.chess)
+        this.runVsIA()
+        this.$emit('move', board)
+        this.$emit('update:fen', state.fen)
           //this.$emit('update:pgn', state.pgn)
           var history = state.history
           var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -218,13 +240,16 @@
             pgn: state.pgn
           }
           this.updateBoardState(board)
+          
         }else{
           var state= changeBoardState(this.ground,this.chess,board, this.mode)
           if (this.history.length === 0) {
             this.history = state.history
           }
+          this.currentIndex = state.history.length -1
           this.getTimeRegisterInGame()
         }
+        this.playSound('move')
       },
       onMove (orig, dest) {
         let move = {move:{from: orig, to: dest}};
@@ -265,7 +290,7 @@
       if (this.vsIa.isVsIA && this.vsIa.mode !== 'random') {
         this.garbochessWorker.terminate()
         this.garbochessWorker = null         
-      }
+      }      
     },
     mounted () {
       this.chess = new MyChess();
@@ -321,9 +346,11 @@
       history( val, oldVal){
         if (this.globalHistory.length === 0 && val.length > this.globalHistory.length) {
           this.globalHistory = val
+          this.currentIndex = val.length -1
         }
         if (this.active) {
           this.globalHistory = val
+          this.currentIndex = val.length -1 
         }
         this.$emit('update:history', val)
       },
@@ -335,15 +362,7 @@
 </script>
 
 <style scoped>
-  .rounded {
-    border-radius: 5px;
-  }
+  
 
-  .button {
-    border: 3px solid;
-    padding: 10px 20px;
-    background-color: white;
-    outline: none;
-  }
   
 </style>

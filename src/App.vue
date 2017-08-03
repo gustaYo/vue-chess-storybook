@@ -5,28 +5,8 @@
     <br>
     <label>Style:</label>
     {{styleB}}
-    <div class="container">
-      <div class="boardChess">
-        <board
-        :key-name="idBoard"
-        :use-store="useStore" 
-        @update:history="onHistoryChange"
-        @update:state="val => {state = val}"
-        :vs-ia="vsIa"
-        :mode="mode"
-        :pgn="pgn"
-        :active="active"
-        v-on:move="onMove"
-        v-on:endGame="endGame"
-        orientation='black'
-        v-on:moveIndex="modeToIndex"
-        :orientation="orientation"
-        :style-board="styleB['board']"
-        :pieces-board="styleB['pieces']"
-        >
-      </board>
-    </div>
-    <div class="historyChess">
+
+    <div style="padding-top: 20px; float: left; width: 100%">
       State : {{state}} {{active}}
       <br>
       <label>White time: </label>
@@ -44,22 +24,33 @@
     :keyname="idBoard"
     >
   </timer>
-  <board-history 
-  :index-move="indexHistory"
-  :history="history"
-  v-on:move="historyIndex"
-  :active="active"
-  :back-history="backHistory"
 
-  >
-</board-history>
-
-<button @click="active=false">Surrender</button>
+<button @click="active=false">Resigned</button>
 <button @click="orientation=orientation==='white'?'black':'white'">Invert to {{orientation}}</button>
 <button @click="changeStyleBoard('board')">Change board</button>
 <button @click="changeStyleBoard('pieces')">Change pieces</button>
 
 </div>
+    <div class="container">
+      <div class="boardChess">
+        <board
+        :key-name="idBoard"
+        :use-store="useStore" 
+        @update:state="val => {state = val}"
+        :vs-ia="vsIa"
+        :mode="mode"
+        :active="active"
+        v-on:move="onMove"
+        v-on:endGame="endGame"
+        orientation='black'
+        :orientation="orientation"
+        :style-board="styleB['board']"
+        :pieces-board="styleB['pieces']"
+        :showHistory="true"
+        >
+      </board>
+    </div>
+    
 </div>
 
 </div>
@@ -90,15 +81,12 @@
         },
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',
-        mode: {'white':false,'black':true},        
-        pgn:'',
+        mode: {'white':false,'black':true},
         vsIa: {isVsIA: true, color: 'w', delay: 10, mode: 'worker'},
-        history: [],
         active: true,
         backHistory: true,
         useStore: true,
         state:{color:'w', motiv: false},
-        indexHistory: -1,
         orientation: 'black'
       }
     },
@@ -106,17 +94,8 @@
       changeStyleBoard (type) {
         this.styleB[type] = stylesBoard[type].indexOf(this.styleB[type]) + 1 > stylesBoard[type].length - 1 ? stylesBoard[type][0] : stylesBoard[type][ stylesBoard[type].indexOf(this.styleB[type]) + 1]
       },
-      modeToIndex(index){
-        this.indexHistory = index
-      },
-      endGame () {        
+      endGame () {
         this.active = false
-      },
-      onHistoryChange(history) {
-        this.history = history
-      },
-      historyIndex({pgn}){
-        this.pgn = pgn
       },
       onMove ({move}) {
         if(move){
@@ -142,9 +121,6 @@
   .boardChess{
     float: left;
   }
-  .historyChess{
-    padding-left: 20px;
-    float: left;
-  }
+
 
 </style>
