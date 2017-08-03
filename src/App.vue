@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-  <label>Store:</label>
+    <label>Store:</label>
     {{ $store.state.board[idBoard]}}
     <br>
     <label>Style:</label>
@@ -36,14 +36,14 @@
       :keyname="idBoard"
       >
     </timer>
-      <label>Black time: </label>
-      <timer 
-      :time="timeBoard"
-      :active="state.color !== 'w' && active"
-      :color="'b'"
-      :keyname="idBoard"
-      >
-    </timer>
+    <label>Black time: </label>
+    <timer 
+    :time="timeBoard"
+    :active="state.color !== 'w' && active"
+    :color="'b'"
+    :keyname="idBoard"
+    >
+  </timer>
   <board-history 
   :index-move="indexHistory"
   :history="history"
@@ -55,11 +55,10 @@
 </board-history>
 
 <button @click="active=false">Surrender</button>
-
 <button @click="orientation=orientation==='white'?'black':'white'">Invert to {{orientation}}</button>
-
 <button @click="changeStyleBoard('board')">Change board</button>
-<button @click="changeStyleBoard('pieces')">Change peices</button>
+<button @click="changeStyleBoard('pieces')">Change pieces</button>
+
 </div>
 </div>
 
@@ -86,8 +85,8 @@
     data () {
       return {
         styleB: {
-            board: 'blue2.jpg',
-            pieces: 'merida'
+          board: 'blue2.jpg',
+          pieces: 'merida'
         },
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',

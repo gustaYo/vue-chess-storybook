@@ -1,5 +1,18 @@
 .cg-board-wrap {
-  position: relative;
-  background-image: url('images/board/gray.svg');
-  background-size: cover;
+	position: relative;
+	background-image: url('images/board/gray.svg');
+	background-size: cover;
+}
+
+@font-face {
+	font-family: 'ChessSansUsual';
+	src: url('./fonts/ChessSansUsual.woff');
+}
+label.move { 
+	flex: 0 0 42.5%;
+	max-width: 42.5%;
+	box-sizing: border-box; font-family:
+	"ChessSansUsual",sans-serif;
+	font-size: 1.3em;
+	padding-left: 0px; 
 }

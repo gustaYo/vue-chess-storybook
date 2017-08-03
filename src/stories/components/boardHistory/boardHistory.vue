@@ -5,7 +5,8 @@
       <li @dblclick="loadInitState(index)" v-for="(move, index) in historyMove" @click="moveToHistory(index)" v-bind:ref="'item' + index" class="col s6 m6 l6" style="padding: 0 0 !important" v-bind:class="[select === index ? 'item-select' : '']">
         <span>
           <label v-if="index % 2 ===0">{{ (index/2)+1 }}.</label>
-          <img alt="" v-bind:src="urlPiece(move)" height="15" width="15">
+          <!--<img alt="" v-bind:src="urlPiece(move)" height="15" width="15">-->
+          <label class="move">{{getPieceKey(move)}}</label>
           <label><!--{{ move.from }}>{{ move.to }}--> {{ move.san }}</label>
         </span>
       </li>
@@ -79,6 +80,9 @@ export default {
       if (index===0) {
         this.moveToHistory(-1)
       };
+    },
+    getPieceKey(move){
+      return move.piece === 'p'?'p':move.piece.toUpperCase()
     },
     urlPiece (move) {
       return '/images/pieces/'+this.pieces+'/' + move.color + move.piece.toUpperCase() + '.svg'
