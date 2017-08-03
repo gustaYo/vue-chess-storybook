@@ -1,0 +1,5 @@
+.cg-board-wrap {
+  position: relative;
+  background-image: url('images/board/gray.svg');
+  background-size: cover;
+}

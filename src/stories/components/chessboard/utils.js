@@ -131,7 +131,7 @@ export function changeBoardState(cg,chess,board,mode) {
     lastMove:lastMove,
     predroppable:{
       enabled: true
-    },    
+    },
     fen: fen,
     drawable: { shapes: shapeSet1 },
     turnColor: toColor(chess),
@@ -142,6 +142,8 @@ export function changeBoardState(cg,chess,board,mode) {
   })
   { drawable: { shapes: shapeSet1 } }
   cg.setShapes(shapeSet1);
+  //cg.playPremove()
+  //cg.playPredrop()
   return {
     pgn: pgn !==''?pgn:chess.pgn(),
     fen: fen,

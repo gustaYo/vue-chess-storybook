@@ -1,6 +1,10 @@
 <template>
   <div id="app">
+  <label>Store:</label>
     {{ $store.state.board[idBoard]}}
+    <br>
+    <label>Style:</label>
+    {{styleB}}
     <div class="container">
       <div class="boardChess">
         <board
@@ -17,7 +21,8 @@
         orientation='black'
         v-on:moveIndex="modeToIndex"
         :orientation="orientation"
-        :current-style="styleB"
+        :style-board="styleB['board']"
+        :pieces-board="styleB['pieces']"
         >
       </board>
     </div>
@@ -71,8 +76,8 @@
   var pgn = '1. e4 e5 2. Nf3 Nc6 3. Ng5 b5 4. d4 d5 5. Bxb5 dxe4 6. Bxc6+ Ke7 7. Bxa8 Bb7 8. Bxb7 Qd6 9. Bxe4 f5 10. Bxf5 Kf6 11. Ne4+ Ke7 12. Nxd6 Kxd6 13. f4 c5 14. dxe5+ Kc7 15. Qd7+'
 
   var stylesBoard = {
-    board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
-    pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','picture']
+    board: ['blue.svg','blue2.jpg','blue3.jpg', 'gray.svg','grey.jpg', 'gray-hi.png','marble.jpg','red.png','wood2.jpg','green.svg','purple.svg','wood3.jpg','maple.jpg','brown.svg','olive.jpg','canvas2.jpg'],
+    pieces: ['merida','alpha', 'pirouetti', 'cburnett','picture','spatial','fantasy']
   }
 
   export default {
@@ -81,8 +86,8 @@
     data () {
       return {
         styleB: {
-            board: 1,
-            pieces: 0
+            board: 'blue2.jpg',
+            pieces: 'merida'
         },
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',
@@ -100,7 +105,7 @@
     },
     methods: {
       changeStyleBoard (type) {
-        this.styleB[type] = this.styleB[type] + 1 > stylesBoard[type].length - 1 ? 0 : this.styleB[type] + 1
+        this.styleB[type] = stylesBoard[type].indexOf(this.styleB[type]) + 1 > stylesBoard[type].length - 1 ? stylesBoard[type][0] : stylesBoard[type][ stylesBoard[type].indexOf(this.styleB[type]) + 1]
       },
       modeToIndex(index){
         this.indexHistory = index

@@ -1,15 +1,17 @@
 <template>
   <div class="chessground-component">
-  <scroll-direction v-on:scrolld="eventScrollDirection">
-    <section v-bind:class="[stylesBoard['board'][currentStyle['board']],stylesBoard['pieces'][currentStyle['pieces']]]">
+  <scroll-direction v-on:scrolld="eventScrollDirection"
+   
+    <section v-bind:class="'merida'">
       <div
       ref="sboard"
       class="cg-board-wrap"
-      v-bind:style="[dimentions]"
+      v-bind:style="[dimentions,backgroundBoard]"
       >
     </div>
   </section>
   </scroll-direction>
+ 
 </div>
 </template>
 
@@ -21,14 +23,11 @@
   import { toColor, toDests, aiPlay, changeBoardState, getGameState } from './utils'
   import ScrollDirection from '../scrollStaticDirection/scrollDirection.vue'
 
-  import './assets/css/boardSkin.css'
+  import jQuery from 'jquery'
+  import './assets/css/styleBoard.css'
   import './assets/css/chessground.css'
   import './assets/css/pieces.css'
 
-  var stylesBoard = {
-    board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
-    pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','staunton','picture']
-  }
   export default {
     props: {
       vsIa:{
@@ -36,17 +35,16 @@
         default: () => {
           return {isVsIA: false, color: 'w', delay: 1000, mode: 'random'}
         }
-      },
-      stylesBoard:{
-        type: Object,
-        default: () => {
-          return { board: ['blue','blue2', 'wood', 'marble','gray','gray-hi','red'],
-          pieces: ['merida', 'pirouetti','pirouetti-invert', 'cburnett','picture']}
-        }
-      },
+      }, 
       keyName: {
         default: 'someId'
       },
+      styleBoard: {
+        default: 'blue2.jpg'
+      },
+      piecesBoard: {
+        default: 'merida'
+      },       
       mode: {
         type: Object,
         default: () => {
@@ -62,15 +60,6 @@
           return {width: '420px', height: '420px'}
         }
       },
-      currentStyle: {
-        type: Object,
-        default: () => {
-          return {
-            board: 1,
-            pieces: 0
-          }
-        }  
-      },
       useStore: {
         type: Boolean,
         default: false
@@ -78,9 +67,6 @@
       active: {
         type: Boolean,
         default: true
-      },
-      handleClick: {
-        default: () => () => null
       },
       fen: {
         default: ''
@@ -112,6 +98,13 @@
         currentIndex: 0,
         history: [],
         globalHistory: []
+      }
+    },
+    computed:{
+      backgroundBoard(){
+        var type = this.styleBoard
+        var url = 'images/board/'+ type
+        return {backgroundImage: "url('"+url+"')"}
       }
     },
     components:{
@@ -149,6 +142,22 @@
             })
           }, this.vsIa.delay)
         }
+      },
+      changePieceStyle(){
+        var urlPieces = 'images/pieces/'+this.piecesBoard
+        var pieces = [{name:'pawn',key:'P'},{name:'bishop',key:'B'},{name:'knight',key:'N'},{name:'rook',key:'R'},{name:'queen',key:'Q'},{name:'king',key:'K'}]
+        var colors = [{name:'white',key:'w'},{name:'black',key:'b'}]
+        var loadColor = (color) =>{
+          pieces.map(({name,key},index)=>{
+            var url = urlPieces+'/'+color.key+key+'.svg'
+            jQuery('.cg-board piece.'+name+'.'+color.name).css({
+              'background-image': "url("+url+")"
+            })
+          })
+        }
+        colors.map((color,index)=>{
+          loadColor(color)
+        })        
       },
       isIAColorTurn(){
         return this.loopTime && this.vsIa.isVsIA && (this.chess.turn()===this.vsIa.color) || this.vsIa.color==='all'
@@ -229,6 +238,12 @@
         this.stopGame()
         this.$emit('endGame',true)
       },
+      changeStyleBoard(style){
+        var url = 'images/board/'+style
+        jQuery(this.$refs.sboard).css({
+          'background-image': "url("+url+")"
+        })
+      },
       updateBoardState(state){
         if (this.useStore) {
           this.$store.commit('updateStateBoard',{[this.keyName]:state})
@@ -258,7 +273,7 @@
         predroppable:{
           enabled: true
         },
-        movable: {          
+        movable: {
           free: false,
           dests: toDests(this.chess),
           events: { after: this.onMove }
@@ -266,15 +281,22 @@
         orientation: this.orientation,
         viewOnly: false,
         animation: {
+          enabled: true,
           duration: 300
-        },        
+        }        
       });
       this.move({fen:this.fen})
       if(this.pgn !=''){
         this.move({pgn:this.pgn})
       }
+      setTimeout(()=>{
+        this.changePieceStyle()
+      },100)   
     },
     watch: {
+      piecesBoard (val, oldVal) {
+        this.changePieceStyle(val)        
+      },
       orientation (val, oldVal) {
         this.ground.set({orientation: val})
       },

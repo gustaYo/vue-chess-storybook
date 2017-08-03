@@ -8,7 +8,8 @@
       @update:fen="val => {fen = val}"
       :active="active"
       :orientation="orientation"
-      :current-style="boardTheme"
+      style-board="wood3.jpg"
+      pieces-board="alpha"
        ></board>
     <div v-if="wins">
       <h2>wins</h2>
