@@ -1,19 +1,16 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# dependencies
-node_modules
-
-# testing
-coverage
-
-# production
-build
-
-# misc
 .DS_Store
-.env
-npm-debug.log
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/e2e/reports
+selenium-debug.log
+storybook-static/
 
-yarn.lock
-
-storybook-static
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
