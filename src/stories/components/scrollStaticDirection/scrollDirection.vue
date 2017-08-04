@@ -43,9 +43,7 @@
 					e.preventDefault();
 				e.returnValue = false;  
 			},
-			enableScroll() {
-				var wheelEvent = isEventSupported('mousewheel') ? 'mousewheel' : 'wheel';
-				document.addEventListener(wheelEvent,this.onScroll);
+			enableScroll() {				
 				if (window.removeEventListener)
 					window.removeEventListener('DOMMouseScroll', this.preventDefault, false);
 				window.onmousewheel = document.onmousewheel = null; 
@@ -82,6 +80,8 @@
 	}
 },
 created () {
+	var wheelEvent = isEventSupported('mousewheel') ? 'mousewheel' : 'wheel';
+	document.addEventListener(wheelEvent,this.onScroll);
 },
 watch: {
 	active (val, oldVal) {
