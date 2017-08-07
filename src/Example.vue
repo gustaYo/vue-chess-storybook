@@ -7,19 +7,19 @@
     {{styleB}}
 
     <div style="padding-top: 20px; float: left; width: 100%">
-      State : {{state}} {{active}}
+      State : {{state.state}} {{active}}
       <br>
       <label>White time: </label>
       <timer
       :time="timeBoard"
-      :active="state.color === 'w' && active"
+      :active="state.state.color === 'w' && active"
       :keyname="idBoard"
       >
     </timer>
     <label>Black time: </label>
     <timer 
     :time="timeBoard"
-    :active="state.color !== 'w' && active"
+    :active="state.state.color !== 'w' && active"
     :color="'b'"
     :keyname="idBoard"
     >
@@ -35,10 +35,10 @@
       <div class="boardChess">
         <board
         :key-name="idBoard"
-        :use-store="useStore" 
-        @update:state="val => {state = val}"
+        @update:state="updateState"
         :vs-ia="vsIa"
         :mode="mode"
+        :use-store="true"
         :active="active"
         v-on:move="onMove"
         v-on:endGame="endGame"
@@ -82,22 +82,29 @@
         timeBoard: 60*3*1000,
         idBoard: 'testSomeIdBoard',
         mode: {'white':false,'black':true},
-        vsIa: {isVsIA: true, color: 'w', delay: 10, mode: 'worker'},
+        vsIa: {isVsIA: true, color: 'w', delay: 2000, mode: 'worker'},
         active: true,
         backHistory: true,
-        useStore: true,
-        state:{color:'w', motiv: false},
+        timesHistory: [],
+        state:{state:{color: 'w', }},
         orientation: 'black'
       }
     },
     methods: {
+      updateState(newState){
+        this.state = newState
+        this.updateBoardState(newState)
+      },
       changeStyleBoard (type) {
         this.styleB[type] = stylesBoard[type].indexOf(this.styleB[type]) + 1 > stylesBoard[type].length - 1 ? stylesBoard[type][0] : stylesBoard[type][ stylesBoard[type].indexOf(this.styleB[type]) + 1]
       },
       endGame () {
         this.active = false
       },
-      onMove ({move}) {
+      updateBoardState(state){
+        this.$store.commit('updateStateBoard',{[this.idBoard]:state})
+      },
+      onMove ({move, pgn, fen }) {
         if(move){
           console.log(move)
         }

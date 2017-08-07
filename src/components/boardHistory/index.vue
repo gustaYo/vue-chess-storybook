@@ -218,7 +218,7 @@ ul.history-board li:hover{
 .section-history{
   float: left;
   padding-left: 15px;
-  width: 235px;
+  width: 250px;
 }
 
 </style>

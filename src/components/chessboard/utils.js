@@ -99,7 +99,7 @@ export function isGameOver(chess,gameOver,turn) {
   }
 }
 
-export function changeBoardState(cg,chess,board,mode) {
+export function changeBoardState(cg,chess,board,mode,currenPgn) {
   var move = {}
   var pgn = ''
   if (board.move) {
@@ -113,7 +113,9 @@ export function changeBoardState(cg,chess,board,mode) {
   }else{
     if (board.pgn){
       pgn = board.pgn
-      chess.load_pgn(board.pgn)
+      if (currenPgn !== 'pgn') {
+        chess.load_pgn(board.pgn)
+      }      
     }else{
       if(board.fen){
         if(!chess.load(board.fen)){
@@ -132,9 +134,6 @@ export function changeBoardState(cg,chess,board,mode) {
   const  shapeSet1 = lastMove[0] && lastMove[1] && [{ orig: lastMove[0] || '', dest: lastMove[1] || '', brush: 'green' }] || []  
   cg.set({
     premovable:{
-      enabled:true,
-      showDests: true,
-      castle: true,
       current: lastMove
     },
     lastMove:lastMove,
@@ -152,11 +151,12 @@ export function changeBoardState(cg,chess,board,mode) {
   { drawable: { shapes: shapeSet1 } }
   cg.setShapes(shapeSet1);
   //cg.playPremove()
-  //cg.playPredrop()
+  cg.playPredrop()
   return {
     pgn: pgn !==''?pgn:chess.pgn(),
     fen: fen,
-    history: history
+    history: history,
+    state: getGameState(chess)
   }
 }
 

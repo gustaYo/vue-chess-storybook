@@ -68,21 +68,29 @@
           return {width: '420px', height: '420px'}
         }
       },
+      useFastMove: {
+        type: Boolean,
+        default: true
+      },
       showHistory: {
         type: Boolean,
         default: false
-      },       
-      useStore: {
-        type: Boolean,
-        default: false
-      },      
+      },
       active: {
         type: Boolean,
         default: true
       },
+      useStore: {
+        type: Boolean,
+        default: false
+      },      
       sound: {
         type: Boolean,
         default: true
+      },
+      viewOnly: {
+        type: Boolean,
+        default: false
       },      
       fen: {
         default: ''
@@ -90,6 +98,9 @@
       pgn: {
         default: ''
       },
+      promotion: {
+        default: 'q'
+      },      
       orientation: {
         default: 'white'
       },
@@ -108,12 +119,14 @@
         chess: {},
         ground: 0,
         stateGame: {},
+        currenPgn: '',
         loopTime: true,
         garbochessWorker: {},
         timesHistory: [],
         currentIndex: 0,
         history: [],
-        globalHistory: []
+        globalHistory: [],
+        fastMove: {}
       }
     },
     computed:{
@@ -181,8 +194,8 @@
     },
     getTimeRegisterInGame () {
       if (this.useStore) {
-        var history = this.chess.history()
-        var post = history.length-1
+        var history = this.timesHistory.length
+        var post = this.currentIndex
         if (post>=0) {
           if (history.length % 2 === 0) {
             this.$store.commit('changeTime',{keyName:this.keyName, c: 'w', time: this.timesHistory[post] || 0})
@@ -205,7 +218,6 @@
           this.timesHistory = times
         }else{
           var turn = this.chess.turn()
-
           if (this.$store.state.board[this.keyName] && this.$store.state.board[this.keyName].times && this.$store.state.board[this.keyName].times[turn]) {
             var time = this.$store.state.board[this.keyName].times[turn]
             this.timesHistory.push(time)
@@ -219,38 +231,45 @@
         soundBoard(type)
       }
     },
+    fastMovePremovable(role, key){
+      this.fastMove = {
+        from: role,
+        to: key
+      }
+    },
     move (board) {
       if (this.active){
-        var state= changeBoardState(this.ground,this.chess,board, this.mode)
-        this.stateGame = getGameState(this.chess)
+        var state= changeBoardState(this.ground,this.chess,board, this.mode, this.currenPgn)
+        var history = state.history
+        delete state['history']
+        this.stateGame = state
         this.runVsIA()
         this.$emit('move', board)
-        this.$emit('update:fen', state.fen)
-          //this.$emit('update:pgn', state.pgn)
-          var history = state.history
-          var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-          if (fenINit !==state.fen) {
+        this.$emit('update:fen', state.fen)        
+        var fenINit = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+        if (fenINit !==state.fen) {
             this.registerTimeMove(history.length)
-          }else{
-            this.timesHistory = []
-          }
-          this.history = history
-          var board = {
-            fen: state.fen,
-            pgn: state.pgn
-          }
-          this.updateBoardState(board)
-          
         }else{
-          var state= changeBoardState(this.ground,this.chess,board, this.mode)
-          if (this.history.length === 0) {
-            this.history = state.history
-          }
-          this.currentIndex = state.history.length -1
-          this.getTimeRegisterInGame()
+          this.timesHistory = []
         }
-        this.playSound('move')
-      },
+        this.history = history
+        this.currenPgn = state.pgn
+        if (this.fastMove.from && this.useFastMove) {
+          var move = this.fastMove
+          this.fastMove = {}
+          this.move({move:move})
+        }
+      }else{
+        var state= changeBoardState(this.ground,this.chess,board, this.mode)
+        this.currenPgn = state.pgn
+        if (this.history.length === 0) {
+          this.history = state.history
+        }
+        this.currentIndex = state.history.length -1
+        this.getTimeRegisterInGame()
+      }
+      this.playSound('move')
+    },
       onMove (orig, dest) {
         let move = {move:{from: orig, to: dest}};
         this.move(move)
@@ -269,18 +288,9 @@
           'background-image': "url("+url+")"
         })
       },
-      updateBoardState(state){
-        if (this.useStore) {
-          this.$store.commit('updateStateBoard',{[this.keyName]:state})
-        };
-      }
+
     },
     created () {
-      var board = {
-        fen: this.fen,
-        pgn: this.pgn
-      }
-      this.updateBoardState(board)
       if (this.vsIa.isVsIA && this.vsIa.mode !== 'random') {
         this.garbochessWorker = new GarbochessWorker()
       };
@@ -295,8 +305,13 @@
     mounted () {
       this.chess = new MyChess();
       this.ground = Chessground(this.$refs.sboard, {
-        predroppable:{
-          enabled: true
+        premovable:{
+          enabled: true,
+          showDests: true,
+          castle: true,          
+          events: {
+            set: this.fastMovePremovable
+          }
         },
         movable: {
           free: false,
@@ -304,19 +319,23 @@
           events: { after: this.onMove }
         },
         orientation: this.orientation,
-        viewOnly: false,
+        viewOnly: this.viewOnly,
         animation: {
           enabled: true,
           duration: 300
-        }        
+        },
+        events:{
+          //select: this.onSelectS
+        }
       });
       this.move({fen:this.fen})
       if(this.pgn !=''){
         this.move({pgn:this.pgn})
+        this.currenPgn = this.pgn
       }
       setTimeout(()=>{
         this.changePieceStyle()
-      },100)   
+      },100)
     },
     watch: {
       piecesBoard (val, oldVal) {
@@ -328,15 +347,15 @@
       fen (val, oldVal) {
         this.move({fen:val})
       },
-      pgn (val, oldVal) {
+      pgn (val, oldVal) {        
         this.move({pgn:val})
+        this.currenPgn = val
       },
       stateGame (val, oldVal) {
-        if (val.motiv && val.motiv !=='in_check') {
+        if (val.state.motiv && val.state.motiv !=='in_check') {
           this.endGame()
         }
         this.$emit('update:state', val)
-        this.updateBoardState({state: val})
       },
       active (val, oldVal) {
         if(!val){
